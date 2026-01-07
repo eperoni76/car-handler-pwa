@@ -1,5 +1,5 @@
 import { Revisione } from "./revisione";
-import { Tagliando } from "./tagliando";
+import { Manutenzione } from "./manutenzione";
 import { Utente } from "./utente";
 import { Assicurazione } from "./assicurazione";
 
@@ -16,8 +16,8 @@ export interface Car {
     proprietario: Utente;
     coProprietari: Utente[];
     assicurazioni: Assicurazione[];
-    tagliandi: Tagliando[];
+    manutenzioni: Manutenzione[];
     revisioni: Revisione[];
-    dataProssimoTagliando?: Date;
+    dataProssimaManutenzione?: Date;
     dataProssimaRevisione?: Date;
 }

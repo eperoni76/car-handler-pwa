@@ -80,12 +80,12 @@
           </app-sezione-assicurazioni>
         }
 
-        <!-- SEZIONE TAGLIANDI -->
+        <!-- SEZIONE MANUTENZIONE -->
         @if (car()) {
-          <app-sezione-tagliandi 
+          <app-sezione-manutenzione 
             [car]="car()!"
             (carUpdated)="onCarUpdated($event)">
-          </app-sezione-tagliandi>
+          </app-sezione-manutenzione>
         }
 
         <!-- SEZIONE REVISIONI -->

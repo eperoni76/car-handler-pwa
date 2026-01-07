@@ -59,8 +59,8 @@
 
       <!-- Pulsante aggiungi revisione -->
       <div class="mb-4">
-        <button class="btn btn-primary w-100" (click)="toggleNewRevisioneForm()">
-          <i class="bi bi-plus-circle me-2"></i>
+        <button class="btn w-100" [class.btn-primary]="!showNewRevisioneForm()" [class.btn-secondary]="showNewRevisioneForm()" (click)="toggleNewRevisioneForm()">
+          <i class="bi me-2" [class.bi-plus-circle]="!showNewRevisioneForm()" [class.bi-x-circle]="showNewRevisioneForm()"></i>
           {{ showNewRevisioneForm() ? 'Annulla' : 'Aggiungi Nuova Revisione' }}
         </button>
       </div>
@@ -113,33 +113,75 @@
         
         @for (revisione of getRevisioniOrdinate(); track revisione.id) {
           <div class="revisione-item mb-3" [class.revisione-negativa]="revisione.esito === 'negativa'">
-            <div class="d-flex justify-content-between align-items-start">
-              <div class="flex-grow-1">
-                <div class="row">
-                  <div class="col-md-3">
-                    <strong>Data:</strong> {{ formatDate(revisione.data) }}
-                  </div>
-                  <div class="col-md-3">
-                    <strong>Km:</strong> {{ revisione.chilometraggio.toLocaleString('it-IT') }}
-                  </div>
-                  <div class="col-md-3">
-                    <strong>Esito:</strong> 
-                    <span class="badge" [class.bg-success]="revisione.esito === 'positiva'" [class.bg-danger]="revisione.esito === 'negativa'">
-                      {{ revisione.esito === 'positiva' ? 'Positiva' : 'Negativa' }}
-                    </span>
-                  </div>
-                  @if (revisione.note) {
-                    <div class="col-12 mt-2">
-                      <strong>Note:</strong>
-                      <p class="mb-0 mt-1 text-muted">{{ revisione.note }}</p>
-                    </div>
-                  }
+            
+            @if (editingRevisioneId === revisione.id && editRevisione) {
+              <!-- Form di modifica -->
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label fw-bold">Data *</label>
+                  <input type="date" class="form-control" [(ngModel)]="editRevisione.data">
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label fw-bold">Chilometraggio *</label>
+                  <input type="number" class="form-control" [(ngModel)]="editRevisione.chilometraggio" min="0">
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label fw-bold">Esito *</label>
+                  <select class="form-control" [(ngModel)]="editRevisione.esito">
+                    <option value="positiva">Positiva</option>
+                    <option value="negativa">Negativa</option>
+                  </select>
+                </div>
+                <div class="col-md-12 mb-3">
+                  <label class="form-label fw-bold">Note</label>
+                  <textarea class="form-control text-uppercase" [(ngModel)]="editRevisione.note" rows="3" placeholder="Note aggiuntive"></textarea>
+                </div>
+                <div class="col-12 text-end">
+                  <button class="btn btn-sm btn-secondary me-2" (click)="cancelEditRevisione()">
+                    <i class="bi bi-x-lg me-1"></i>
+                    Annulla
+                  </button>
+                  <button class="btn btn-sm btn-success" (click)="saveEditRevisione()">
+                    <i class="bi bi-check-lg me-1"></i>
+                    Salva
+                  </button>
                 </div>
               </div>
-              <button class="btn btn-sm btn-outline-danger ms-3" (click)="deleteRevisione(revisione.id)">
-                <i class="bi bi-trash"></i>
-              </button>
-            </div>
+            } @else {
+              <!-- Visualizzazione normale -->
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="flex-grow-1">
+                  <div class="row">
+                    <div class="col-md-3">
+                      <strong>Data:</strong> {{ formatDate(revisione.data) }}
+                    </div>
+                    <div class="col-md-3">
+                      <strong>Km:</strong> {{ revisione.chilometraggio.toLocaleString('it-IT') }}
+                    </div>
+                    <div class="col-md-3">
+                      <strong>Esito: </strong> 
+                      <span class="badge" [class.bg-success]="revisione.esito === 'positiva'" [class.bg-danger]="revisione.esito === 'negativa'">
+                        {{ revisione.esito === 'positiva' ? 'Positiva' : 'Negativa' }}
+                      </span>
+                    </div>
+                    @if (revisione.note) {
+                      <div class="col-12 mt-2">
+                        <strong>Note:</strong>
+                        <p class="mb-0 mt-1 text-muted">{{ revisione.note }}</p>
+                      </div>
+                    }
+                  </div>
+                </div>
+                <div class="d-flex flex-column gap-2 ms-3">
+                  <button class="btn btn-sm btn-outline-primary" (click)="startEditRevisione(revisione)">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger" (click)="deleteRevisione(revisione.id)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </div>
+            }
           </div>
         }
       } @else {

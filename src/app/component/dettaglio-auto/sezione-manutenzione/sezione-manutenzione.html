@@ -1,0 +1,159 @@
+<div class="accordion-card">
+  <div class="accordion-header" (click)="toggleManutenzione()">
+    <div class="d-flex align-items-center">
+      <i class="bi bi-wrench-adjustable-circle-fill me-2"></i>
+      <span class="accordion-title">Manutenzione</span>
+    </div>
+    <i class="bi" [class.bi-chevron-up]="manutenzioneOpen()" [class.bi-chevron-down]="!manutenzioneOpen()"></i>
+  </div>
+
+  @if (manutenzioneOpen()) {
+    <div class="accordion-body">
+      
+      <!-- Pulsante aggiungi manutenzione -->
+      <div class="mb-4">
+        <button class="btn w-100" [class.btn-primary]="!showNewManutenzioneForm()" [class.btn-secondary]="showNewManutenzioneForm()" (click)="toggleNewManutenzioneForm()">
+          <i class="bi me-2" [class.bi-plus-circle]="!showNewManutenzioneForm()" [class.bi-x-circle]="showNewManutenzioneForm()"></i>
+          {{ showNewManutenzioneForm() ? 'Annulla' : 'Aggiungi Nuova Manutenzione' }}
+        </button>
+      </div>
+
+      <!-- Form nuova manutenzione -->
+      @if (showNewManutenzioneForm()) {
+        <div class="new-manutenzione-form mb-4">
+          <h5 class="mb-3">Nuova Manutenzione</h5>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">Data *</label>
+              <input type="date" class="form-control" [(ngModel)]="newManutenzione.data">
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">Chilometraggio *</label>
+              <input type="number" class="form-control" [(ngModel)]="newManutenzione.chilometraggio" min="0">
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">Costo (€)</label>
+              <input type="number" class="form-control" [(ngModel)]="newManutenzione.costo" min="0" step="0.01">
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">Tipologia *</label>
+              <select class="form-control" [(ngModel)]="newManutenzione.tipologia">
+                <option value="ordinaria">Ordinaria (Tagliando)</option>
+                <option value="straordinaria">Straordinaria</option>
+              </select>
+            </div>
+
+            <div class="col-md-12 mb-3">
+              <label class="form-label fw-bold">Descrizione *</label>
+              <textarea 
+                class="form-control text-uppercase" 
+                [(ngModel)]="newManutenzione.descrizione" 
+                rows="4"
+                placeholder="Descrivi le operazioni effettuate (es. CAMBIO OLIO, FILTRI, PASTIGLIE FRENO...)"></textarea>
+            </div>
+
+            <div class="col-12 text-end">
+              <button class="btn btn-success" (click)="addManutenzione()">
+                <i class="bi bi-plus-lg me-1"></i>
+                Aggiungi
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Storico manutenzioni -->
+      @if (getManutenzioniOrdinate().length > 0) {
+        <h5 class="mb-3">Storico Manutenzioni</h5>
+        
+        @for (manutenzione of getManutenzioniOrdinate(); track manutenzione.id) {
+          <div class="manutenzione-item mb-3">
+            
+            @if (editingManutenzioneId === manutenzione.id && editManutenzione) {
+              <!-- Form di modifica -->
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label fw-bold">Data *</label>
+                  <input type="date" class="form-control" [(ngModel)]="editManutenzione.data">
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label fw-bold">Chilometraggio *</label>
+                  <input type="number" class="form-control" [(ngModel)]="editManutenzione.chilometraggio" min="0">
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label fw-bold">Costo (€)</label>
+                  <input type="number" class="form-control" [(ngModel)]="editManutenzione.costo" min="0" step="0.01">
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label fw-bold">Tipologia *</label>
+                  <select class="form-control" [(ngModel)]="editManutenzione.tipologia">
+                    <option value="ordinaria">Ordinaria (Tagliando)</option>
+                    <option value="straordinaria">Straordinaria</option>
+                  </select>
+                </div>
+                <div class="col-md-12 mb-3">
+                  <label class="form-label fw-bold">Descrizione *</label>
+                  <textarea class="form-control text-uppercase" [(ngModel)]="editManutenzione.descrizione" rows="4" placeholder="Descrivi le operazioni effettuate"></textarea>
+                </div>
+                <div class="col-12 text-end">
+                  <button class="btn btn-sm btn-secondary me-2" (click)="cancelEditManutenzione()">
+                    <i class="bi bi-x-lg me-1"></i>
+                    Annulla
+                  </button>
+                  <button class="btn btn-sm btn-success" (click)="saveEditManutenzione()">
+                    <i class="bi bi-check-lg me-1"></i>
+                    Salva
+                  </button>
+                </div>
+              </div>
+            } @else {
+              <!-- Visualizzazione normale -->
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="flex-grow-1">
+                  <div class="row">
+                    <div class="col-md-3">
+                      <strong>Data:</strong> {{ formatDate(manutenzione.data) }}
+                    </div>
+                    <div class="col-md-3">
+                      <strong>Km:</strong> {{ manutenzione.chilometraggio.toLocaleString('it-IT') }}
+                    </div>
+                    <div class="col-md-3">
+                      <strong>Tipologia:</strong> 
+                      <span class="badge" [class.bg-primary]="manutenzione.tipologia === 'ordinaria'" [class.bg-info]="manutenzione.tipologia === 'straordinaria'">
+                        {{ manutenzione.tipologia === 'ordinaria' ? 'Ordinaria' : 'Straordinaria' }}
+                      </span>
+                    </div>
+                    <div class="col-md-3">
+                      <strong>Costo:</strong> {{ formatPrice(manutenzione.costo) }}
+                    </div>
+                    <div class="col-12 mt-2">
+                      <strong>Descrizione:</strong>
+                      <p class="mb-0 mt-1 text-muted">{{ manutenzione.descrizione }}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="d-flex flex-column gap-2 ms-3">
+                  <button class="btn btn-sm btn-outline-primary" (click)="startEditManutenzione(manutenzione)">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger" (click)="deleteManutenzione(manutenzione.id)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      } @else {
+        <div class="alert alert-info" role="alert">
+          <i class="bi bi-info-circle me-2"></i>
+          Non ci sono manutenzioni registrate per questa auto.
+        </div>
+      }
+
+    </div>
+  }
+</div>

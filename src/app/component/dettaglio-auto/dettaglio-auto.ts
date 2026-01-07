@@ -8,7 +8,7 @@ import { Utente } from '../../model/utente';
 import { SezioneAnagrafica } from './sezione-anagrafica/sezione-anagrafica';
 import { SezioneCoproprietari } from './sezione-coproprietari/sezione-coproprietari';
 import { SezioneAssicurazioni } from './sezione-assicurazioni/sezione-assicurazioni';
-import { SezioneTagliandi } from './sezione-tagliandi/sezione-tagliandi';
+import { SezioneManutenzione } from './sezione-manutenzione/sezione-manutenzione';
 import { SezioneRevisioni } from './sezione-revisioni/sezione-revisioni';
 
 @Component({
@@ -18,7 +18,7 @@ import { SezioneRevisioni } from './sezione-revisioni/sezione-revisioni';
     SezioneAnagrafica,
     SezioneCoproprietari,
     SezioneAssicurazioni,
-    SezioneTagliandi,
+    SezioneManutenzione,
     SezioneRevisioni
   ],
   templateUrl: './dettaglio-auto.html',
@@ -55,7 +55,7 @@ export class DettaglioAuto implements OnInit {
         if (car) {
           // Inizializza array se non esistono
           if (!car.assicurazioni) car.assicurazioni = [];
-          if (!car.tagliandi) car.tagliandi = [];
+          if (!car.manutenzioni) car.manutenzioni = [];
           if (!car.revisioni) car.revisioni = [];
           if (!car.coProprietari) car.coProprietari = [];
           
@@ -75,7 +75,6 @@ export class DettaglioAuto implements OnInit {
   }
 
   onCarUpdated(updatedCar: Car): void {
-    // Pulisci l'oggetto rimuovendo i campi undefined (Firestore non li accetta)
     const cleanedCar = this.cleanUndefinedFields(updatedCar);
     
     this.carService.update(updatedCar.targa, cleanedCar).subscribe({

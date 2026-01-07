@@ -37,8 +37,8 @@
 
       <!-- Pulsante aggiungi coproprietario -->
       <div class="mb-4">
-        <button class="btn btn-primary w-100" (click)="toggleNewCoproprietarioForm()">
-          <i class="bi bi-plus-circle me-2"></i>
+        <button class="btn w-100" [class.btn-primary]="!showNewCoproprietarioForm()" [class.btn-secondary]="showNewCoproprietarioForm()" (click)="toggleNewCoproprietarioForm()">
+          <i class="bi me-2" [class.bi-plus-circle]="!showNewCoproprietarioForm()" [class.bi-x-circle]="showNewCoproprietarioForm()"></i>
           {{ showNewCoproprietarioForm() ? 'Annulla' : 'Aggiungi Coproprietario' }}
         </button>
       </div>

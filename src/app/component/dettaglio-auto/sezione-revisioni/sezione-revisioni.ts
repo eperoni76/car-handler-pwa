@@ -18,6 +18,8 @@ export class SezioneRevisioni {
   revisioniOpen = signal(false);
   showNewRevisioneForm = signal(false);
   newRevisione: Revisione = this.getEmptyRevisione();
+  editingRevisioneId: string | null = null;
+  editRevisione: Revisione | null = null;
 
   toggleRevisioni() {
     this.revisioniOpen.set(!this.revisioniOpen());
@@ -138,6 +140,33 @@ export class SezioneRevisioni {
     if (confirm('Sei sicuro di voler eliminare questa revisione?')) {
       this.car.revisioni = this.car.revisioni?.filter(r => r.id !== id);
       this.carUpdated.emit(this.car);
+    }
+  }
+
+  startEditRevisione(revisione: Revisione) {
+    this.editingRevisioneId = revisione.id;
+    this.editRevisione = { ...revisione };
+  }
+
+  cancelEditRevisione() {
+    this.editingRevisioneId = null;
+    this.editRevisione = null;
+  }
+
+  saveEditRevisione() {
+    if (!this.editRevisione || !this.editRevisione.data || !this.editRevisione.chilometraggio || !this.editRevisione.esito) {
+      alert('Compila tutti i campi obbligatori');
+      return;
+    }
+
+    const index = this.car.revisioni?.findIndex(r => r.id === this.editingRevisioneId);
+    if (index !== undefined && index !== -1 && this.car.revisioni) {
+      this.car.revisioni[index] = {
+        ...this.editRevisione,
+        note: this.editRevisione.note?.toUpperCase()
+      };
+      this.carUpdated.emit(this.car);
+      this.cancelEditRevisione();
     }
   }
 

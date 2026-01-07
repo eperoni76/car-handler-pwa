@@ -39,45 +39,97 @@
             }
           </div>
 
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <strong>Compagnia:</strong> {{ assicurazioneAttiva.compagnia }}
-            </div>
-            <div class="col-md-6 mb-3">
-              <strong>Polizza:</strong> {{ assicurazioneAttiva.numeroPolizza }}
-            </div>
-            <div class="col-md-4 mb-3">
-              <strong>Data Inizio:</strong> {{ formatDate(assicurazioneAttiva.dataInizio) }}
-            </div>
-            <div class="col-md-4 mb-3">
-              <strong>Data Fine:</strong> 
-              <span [class.text-danger]="isAssicurazioneInScadenza(assicurazioneAttiva.dataFine) || isAssicurazioneScaduta(assicurazioneAttiva.dataFine)">
-                {{ formatDate(assicurazioneAttiva.dataFine) }}
-              </span>
-            </div>
-            <div class="col-md-4 mb-3">
-              <strong>Costo Annuale:</strong> {{ formatPrice(assicurazioneAttiva.costoAnnuale) }}
-            </div>
-            @if (assicurazioneAttiva.coperture && assicurazioneAttiva.coperture.length > 0) {
-              <div class="col-12 mb-3">
-                <strong>Coperture:</strong>
-                <p class="mb-0 mt-1">{{ assicurazioneAttiva.coperture.join(', ') }}</p>
+          @if (editingAssicurazioneId === assicurazioneAttiva.id && editAssicurazione) {
+            <!-- Form di modifica -->\n            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Compagnia *</label>
+                <input type="text" class="form-control text-uppercase" [(ngModel)]="editAssicurazione.compagnia">
               </div>
-            }
-          </div>
-          <div class="text-end">
-            <button class="btn btn-sm btn-outline-danger" (click)="deleteAssicurazione(assicurazioneAttiva.id)">
-              <i class="bi bi-trash me-1"></i>
-              Elimina
-            </button>
-          </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Numero Polizza *</label>
+                <input type="text" class="form-control text-uppercase" [(ngModel)]="editAssicurazione.numeroPolizza">
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label fw-bold">Data Inizio *</label>
+                <input type="date" class="form-control" [(ngModel)]="editAssicurazione.dataInizio">
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label fw-bold">Data Fine *</label>
+                <input type="date" class="form-control" [(ngModel)]="editAssicurazione.dataFine">
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label fw-bold">Costo Annuale (€) *</label>
+                <input type="number" class="form-control" [(ngModel)]="editAssicurazione.costoAnnuale">
+              </div>
+              <div class="col-12 mb-3">
+                <label class="form-label fw-bold">Coperture (separate da virgola)</label>
+                <input type="text" class="form-control text-uppercase" placeholder="RCA, FURTO, INCENDIO" [(ngModel)]="editCopertureInput">
+              </div>
+              <div class="col-12 text-end">
+                <button class="btn btn-sm btn-secondary me-2" (click)="cancelEdit()">
+                  <i class="bi bi-x-lg me-1"></i>
+                  Annulla
+                </button>
+                <button class="btn btn-sm btn-success" (click)="saveEditAssicurazione()">
+                  <i class="bi bi-check-lg me-1"></i>
+                  Salva
+                </button>
+              </div>
+            </div>
+          } @else {
+            <!-- Visualizzazione normale -->
+            <div class="row">
+              <div class="col-md-8">
+                <div class="mb-2">
+                  <strong>Compagnia:</strong> {{ assicurazioneAttiva.compagnia }}
+                </div>
+                <div class="mb-2">
+                  <strong>Polizza:</strong> {{ assicurazioneAttiva.numeroPolizza }}
+                </div>
+                <div class="mb-2">
+                  <strong>Data Inizio:</strong> {{ formatDate(assicurazioneAttiva.dataInizio) }}
+                </div>
+                <div class="mb-2">
+                  <strong>Data Fine:</strong> 
+                  <span [class.text-danger]="isAssicurazioneInScadenza(assicurazioneAttiva.dataFine) || isAssicurazioneScaduta(assicurazioneAttiva.dataFine)">
+                    {{ formatDate(assicurazioneAttiva.dataFine) }}
+                  </span>
+                </div>
+                <div class="mb-2">
+                  <strong>Costo Annuale:</strong> {{ formatPrice(assicurazioneAttiva.costoAnnuale) }}
+                </div>
+              </div>
+              <div class="col-md-4">
+                <strong>Coperture:</strong>
+                @if (assicurazioneAttiva.coperture && assicurazioneAttiva.coperture.length > 0) {
+                  <ul class="list-unstyled mt-2 mb-0">
+                    @for (copertura of assicurazioneAttiva.coperture; track copertura) {
+                      <li><i class="bi bi-check-circle-fill text-success me-2"></i>{{ copertura }}</li>
+                    }
+                  </ul>
+                } @else {
+                  <p class="text-muted mb-0 mt-2">Nessuna copertura specificata</p>
+                }
+              </div>
+            </div>
+            <div class="text-end mt-3">
+              <button class="btn btn-sm btn-outline-primary me-2" (click)="startEditAssicurazione(assicurazioneAttiva)">
+                <i class="bi bi-pencil me-1"></i>
+                Modifica
+              </button>
+              <button class="btn btn-sm btn-outline-danger" (click)="deleteAssicurazione(assicurazioneAttiva.id)">
+                <i class="bi bi-trash me-1"></i>
+                Elimina
+              </button>
+            </div>
+          }
         </div>
       }
 
       <!-- Pulsante aggiungi nuova assicurazione -->
       <div class="mb-4">
-        <button class="btn btn-primary w-100" (click)="toggleNewAssicurazioneForm()">
-          <i class="bi bi-plus-circle me-2"></i>
+        <button class="btn w-100" [class.btn-primary]="!showNewAssicurazioneForm()" [class.btn-secondary]="showNewAssicurazioneForm()" (click)="toggleNewAssicurazioneForm()">
+          <i class="bi me-2" [class.bi-plus-circle]="!showNewAssicurazioneForm()" [class.bi-x-circle]="showNewAssicurazioneForm()"></i>
           {{ showNewAssicurazioneForm() ? 'Annulla' : 'Aggiungi Nuova Assicurazione' }}
         </button>
       </div>
@@ -136,32 +188,86 @@
           <div class="assicurazione-item mb-3" 
                [class.in-scadenza]="isAssicurazioneInScadenza(assicurazione.dataFine)"
                [class.scaduta]="isAssicurazioneScaduta(assicurazione.dataFine)">
-            <div class="d-flex justify-content-between align-items-start">
-              <div class="flex-grow-1">
-                <div class="row">
-                  <div class="col-md-4">
-                    <strong>Compagnia:</strong> {{ assicurazione.compagnia }}
-                  </div>
-                  <div class="col-md-4">
-                    <strong>Polizza:</strong> {{ assicurazione.numeroPolizza }}
-                  </div>
-                  <div class="col-md-4">
-                    <strong>Costo Annuale:</strong> {{ formatPrice(assicurazione.costoAnnuale) }}
-                  </div>
-                  <div class="col-md-6 mt-2">
-                    <strong>Periodo:</strong> {{ formatDate(assicurazione.dataInizio) }} - {{ formatDate(assicurazione.dataFine) }}
-                  </div>
-                  @if (assicurazione.coperture && assicurazione.coperture.length > 0) {
-                    <div class="col-12 mt-2">
-                      <strong>Coperture:</strong> {{ assicurazione.coperture.join(', ') }}
-                    </div>
-                  }
+            
+            @if (editingAssicurazioneId === assicurazione.id && editAssicurazione) {
+              <!-- Form di modifica -->
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label fw-bold">Compagnia *</label>
+                  <input type="text" class="form-control text-uppercase" [(ngModel)]="editAssicurazione.compagnia">
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label fw-bold">Numero Polizza *</label>
+                  <input type="text" class="form-control text-uppercase" [(ngModel)]="editAssicurazione.numeroPolizza">
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label class="form-label fw-bold">Data Inizio *</label>
+                  <input type="date" class="form-control" [(ngModel)]="editAssicurazione.dataInizio">
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label class="form-label fw-bold">Data Fine *</label>
+                  <input type="date" class="form-control" [(ngModel)]="editAssicurazione.dataFine">
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label class="form-label fw-bold">Costo Annuale (€) *</label>
+                  <input type="number" class="form-control" [(ngModel)]="editAssicurazione.costoAnnuale">
+                </div>
+                <div class="col-12 mb-3">
+                  <label class="form-label fw-bold">Coperture (separate da virgola)</label>
+                  <input type="text" class="form-control text-uppercase" placeholder="RCA, FURTO, INCENDIO" [(ngModel)]="editCopertureInput">
+                </div>
+                <div class="col-12 text-end">
+                  <button class="btn btn-sm btn-secondary me-2" (click)="cancelEdit()">
+                    <i class="bi bi-x-lg me-1"></i>
+                    Annulla
+                  </button>
+                  <button class="btn btn-sm btn-success" (click)="saveEditAssicurazione()">
+                    <i class="bi bi-check-lg me-1"></i>
+                    Salva
+                  </button>
                 </div>
               </div>
-              <button class="btn btn-sm btn-outline-danger ms-3" (click)="deleteAssicurazione(assicurazione.id)">
-                <i class="bi bi-trash"></i>
-              </button>
-            </div>
+            } @else {
+              <!-- Visualizzazione normale -->
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="row flex-grow-1">
+                  <div class="col-md-7">
+                    <div class="mb-2">
+                      <strong>Compagnia:</strong> {{ assicurazione.compagnia }}
+                    </div>
+                    <div class="mb-2">
+                      <strong>Polizza:</strong> {{ assicurazione.numeroPolizza }}
+                    </div>
+                    <div class="mb-2">
+                      <strong>Periodo:</strong> {{ formatDate(assicurazione.dataInizio) }} - {{ formatDate(assicurazione.dataFine) }}
+                    </div>
+                    <div class="mb-2">
+                      <strong>Costo Annuale:</strong> {{ formatPrice(assicurazione.costoAnnuale) }}
+                    </div>
+                  </div>
+                  <div class="col-md-5">
+                    <strong>Coperture:</strong>
+                    @if (assicurazione.coperture && assicurazione.coperture.length > 0) {
+                      <ul class="list-unstyled mt-2 mb-0">
+                        @for (copertura of assicurazione.coperture; track copertura) {
+                          <li><i class="bi bi-check-circle-fill text-success me-2"></i>{{ copertura }}</li>
+                        }
+                      </ul>
+                    } @else {
+                      <p class="text-muted mb-0 mt-2">Nessuna copertura</p>
+                    }
+                  </div>
+                </div>
+                <div class="d-flex flex-column gap-2 ms-3">
+                  <button class="btn btn-sm btn-outline-primary" (click)="startEditAssicurazione(assicurazione)">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger" (click)="deleteAssicurazione(assicurazione.id)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </div>
+            }
           </div>
         }
       }
