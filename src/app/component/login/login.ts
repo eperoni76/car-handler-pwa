@@ -92,9 +92,9 @@ export class Login {
       nome: this.nome.trim().toUpperCase(),
       cognome: this.cognome.trim().toUpperCase(),
       codiceFiscale: this.codiceFiscale.trim().toUpperCase(),
-      email: '', // Non richiesto
-      dataDiNascita: new Date(), // Default
-      annoConseguimentoPatente: this.currentYear
+      email: null,
+      dataDiNascita: null,
+      annoConseguimentoPatente: null
     };
 
     this.authService.register(userData).subscribe({
