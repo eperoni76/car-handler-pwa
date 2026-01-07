@@ -1,5 +1,7 @@
 // Layout principale
 main {
+  padding: 2rem 0;
+
   // Desktop: spazio per la sidebar
   @media (min-width: 992px) {
     margin-left: 280px;
@@ -12,8 +14,6 @@ main {
     margin-bottom: 65px;
     min-height: calc(100vh - 135px);
   }
-
-  padding: 2rem 0;
 
   // Pagina di login: nessun margine
   &.login-main {

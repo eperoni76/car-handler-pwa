@@ -11,6 +11,11 @@ export const routes: Routes = [
   { path: '', component: Homepage, canActivate: [authGuard] },
   { path: 'elenco-auto', component: ElencoAuto, canActivate: [authGuard] },
   { path: 'nuova-auto', component: NuovaAuto, canActivate: [authGuard] },
-  { path: 'dettaglio-auto/:targa', component: DettaglioAuto, canActivate: [authGuard] },
+  { 
+    path: 'dettaglio-auto/:targa', 
+    component: DettaglioAuto, 
+    canActivate: [authGuard],
+    data: { prerender: false }
+  },
   { path: '**', redirectTo: 'login' }
 ];
