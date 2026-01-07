@@ -1,1 +1,184 @@
-<p>homepage works!</p>
+<div class="homepage-container">
+  <div class="container">
+    <!-- Header -->
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">
+          <i class="bi bi-person-circle me-2"></i>
+          Profilo Utente
+        </h1>
+        <p class="page-subtitle">Visualizza e modifica i tuoi dati personali</p>
+      </div>
+      <button 
+        class="btn btn-edit-desktop" 
+        [class.btn-primary]="!isEditMode()" 
+        [class.btn-secondary]="isEditMode()"
+        (click)="toggleEditMode()"
+        [disabled]="isSaving()">
+        <i class="bi" [class.bi-pencil-fill]="!isEditMode()" [class.bi-x-lg]="isEditMode()" class="me-2"></i>
+        {{ isEditMode() ? 'Annulla' : 'Modifica' }}
+      </button>
+    </div>
+
+    <!-- Alert messaggi -->
+    @if (successMessage()) {
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        {{ successMessage() }}
+        <button type="button" class="btn-close" (click)="successMessage.set(null)"></button>
+      </div>
+    }
+
+    @if (errorMessage()) {
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-circle-fill me-2"></i>
+        {{ errorMessage() }}
+        <button type="button" class="btn-close" (click)="errorMessage.set(null)"></button>
+      </div>
+    }
+
+    <!-- Card profilo -->
+    @if (currentUser(); as user) {
+      <div class="profile-card">
+        <div class="profile-header">
+          <div class="avatar">
+            <i class="bi bi-person-fill"></i>
+          </div>
+          <div class="user-info">
+            <h2>{{ user.nome }} {{ user.cognome }}</h2>
+            <p class="cf-badge">
+              <i class="bi bi-credit-card me-1"></i>
+              {{ user.codiceFiscale }}
+            </p>
+          </div>
+        </div>
+
+        <form class="profile-body" (ngSubmit)="saveChanges()">
+          <div class="row">
+            <!-- Nome -->
+            <div class="col-md-6">
+              <div class="info-item">
+                <label class="info-label">
+                  <i class="bi bi-person-fill me-2"></i>Nome
+                </label>
+                @if (isEditMode()) {
+                  <input 
+                    type="text" 
+                    class="form-control text-uppercase" 
+                    [(ngModel)]="editData().nome"
+                    name="nome"
+                    required>
+                } @else {
+                  <div class="info-value">{{ user.nome }}</div>
+                }
+              </div>
+            </div>
+
+            <!-- Cognome -->
+            <div class="col-md-6">
+              <div class="info-item">
+                <label class="info-label">
+                  <i class="bi bi-person-fill me-2"></i>Cognome
+                </label>
+                @if (isEditMode()) {
+                  <input 
+                    type="text" 
+                    class="form-control text-uppercase" 
+                    [(ngModel)]="editData().cognome"
+                    name="cognome"
+                    required>
+                } @else {
+                  <div class="info-value">{{ user.cognome }}</div>
+                }
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div class="col-md-6">
+              <div class="info-item">
+                <label class="info-label">
+                  <i class="bi bi-envelope-fill me-2"></i>Email
+                </label>
+                @if (isEditMode()) {
+                  <input 
+                    type="email" 
+                    class="form-control" 
+                    [(ngModel)]="editData().email"
+                    name="email"
+                    placeholder="Inserisci email">
+                } @else {
+                  <div class="info-value">{{ user.email || 'Non impostato' }}</div>
+                }
+              </div>
+            </div>
+
+            <!-- Data di Nascita -->
+            <div class="col-md-6">
+              <div class="info-item">
+                <label class="info-label">
+                  <i class="bi bi-calendar-fill me-2"></i>Data di Nascita
+                </label>
+                @if (isEditMode()) {
+                  <input 
+                    type="date" 
+                    class="form-control" 
+                    [value]="getDateInputValue(editData().dataDiNascita ?? null)"
+                    (change)="onDateChange($event)"
+                    name="dataDiNascita">
+                } @else {
+                  <div class="info-value">{{ formatDate(user.dataDiNascita) }}</div>
+                }
+              </div>
+            </div>
+
+            <!-- Anno Patente -->
+            <div class="col-md-6">
+              <div class="info-item">
+                <label class="info-label">
+                  <i class="bi bi-card-heading me-2"></i>Anno Conseguimento Patente
+                </label>
+                @if (isEditMode()) {
+                  <input 
+                    type="number" 
+                    class="form-control" 
+                    [(ngModel)]="editData().annoConseguimentoPatente"
+                    name="annoPatente"
+                    [min]="1950"
+                    [max]="currentYear"
+                    placeholder="Es. 2010">
+                } @else {
+                  <div class="info-value">{{ user.annoConseguimentoPatente || 'Non impostato' }}</div>
+                }
+              </div>
+            </div>
+          </div>
+
+          @if (isEditMode()) {
+            <div class="action-buttons">
+              <button type="submit" class="btn btn-success" [disabled]="isSaving()">
+                @if (isSaving()) {
+                  <span class="spinner-border spinner-border-sm me-2"></span>
+                  <span>Salvataggio...</span>
+                } @else {
+                  <i class="bi bi-check-lg me-2"></i>
+                  <span>Salva Modifiche</span>
+                }
+              </button>
+            </div>
+          }
+        </form>
+      </div>
+    }
+
+    <!-- Pulsante modifica mobile -->
+    <button 
+      class="btn btn-edit-mobile" 
+      [class.btn-primary]="!isEditMode()" 
+      [class.btn-secondary]="isEditMode()"
+      (click)="toggleEditMode()"
+      [disabled]="isSaving()">
+      <i class="bi" [class.bi-pencil-fill]="!isEditMode()" [class.bi-x-lg]="isEditMode()" class="me-2"></i>
+      {{ isEditMode() ? 'Annulla' : 'Modifica' }}
+    </button>
+  </div>
+</div>

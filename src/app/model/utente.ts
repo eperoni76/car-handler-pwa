@@ -2,8 +2,8 @@ export interface Utente {
     id: string;
     nome: string;
     cognome: string;
-    email: string;
+    email: string | null;
     codiceFiscale: string;
-    dataDiNascita: Date;
-    annoConseguimentoPatente: number;
+    dataDiNascita: Date | null;
+    annoConseguimentoPatente: number | null;
 }

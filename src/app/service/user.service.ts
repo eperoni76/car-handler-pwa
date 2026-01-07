@@ -30,7 +30,13 @@ export class UserService {
           return null;
         }
         const doc = snapshot.docs[0];
-        return { id: doc.id, ...doc.data() } as Utente;
+        const data = doc.data();
+        // Converti Firebase Timestamp in Date
+        return {
+          id: doc.id,
+          ...data,
+          dataDiNascita: data['dataDiNascita'] ? (data['dataDiNascita'] as any).toDate() : null
+        } as Utente;
       })
     );
   }
