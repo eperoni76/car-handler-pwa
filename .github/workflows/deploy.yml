@@ -41,16 +41,16 @@ jobs:
         run: npx ng build --configuration production
 
       - name: Copy index.html to 404.html for SPA routing
-        run: cp dist/car-handler-pwa/browser/index.html dist/car-handler-pwa/browser/404.html
+        run: cp dist/browser/index.html dist/browser/404.html
 
       - name: Remove README to prevent GitHub Pages from using it
-        run: rm -f dist/car-handler-pwa/browser/README.md
+        run: rm -f dist/browser/README.md
 
       - name: Create .nojekyll file to disable Jekyll processing
-        run: touch dist/car-handler-pwa/browser/.nojekyll
+        run: touch dist/browser/.nojekyll
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
-          folder: dist/car-handler-pwa/browser
+          folder: dist/browser
