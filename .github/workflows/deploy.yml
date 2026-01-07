@@ -38,10 +38,13 @@ jobs:
         run: node generate-env.js
 
       - name: Build Angular app
-        run: npx ng build --configuration production --base-href "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+        run: npx ng build --configuration production
 
       - name: Copy index.html to 404.html for SPA routing
         run: cp dist/car-handler-pwa/browser/index.html dist/car-handler-pwa/browser/404.html
+
+      - name: Remove README to prevent GitHub Pages from using it
+        run: rm -f dist/car-handler-pwa/browser/README.md
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
