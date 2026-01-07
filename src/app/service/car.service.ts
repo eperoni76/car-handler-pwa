@@ -113,6 +113,11 @@ export class CarService {
       dataDiVendita: data.dataDiVendita?.toDate ? data.dataDiVendita.toDate() : data.dataDiVendita,
       dataProssimoTagliando: data.dataProssimoTagliando?.toDate ? data.dataProssimoTagliando.toDate() : data.dataProssimoTagliando,
       dataProssimaRevisione: data.dataProssimaRevisione?.toDate ? data.dataProssimaRevisione.toDate() : data.dataProssimaRevisione,
+      assicurazioni: data.assicurazioni?.map((a: any) => ({
+        ...a,
+        dataInizio: a.dataInizio?.toDate ? a.dataInizio.toDate() : a.dataInizio,
+        dataFine: a.dataFine?.toDate ? a.dataFine.toDate() : a.dataFine
+      })) || [],
       tagliandi: data.tagliandi?.map((t: any) => ({
         ...t,
         data: t.data?.toDate ? t.data.toDate() : t.data
