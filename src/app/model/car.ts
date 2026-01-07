@@ -13,6 +13,7 @@ export interface Car {
     dataDiAcquisto: Date;
     dataDiVendita?: Date;
     proprietario: Utente;
+    coProprietari: Utente[];
     tagliandi: Tagliando[];
     revisioni: Revisione[];
     dataProssimoTagliando?: Date;
