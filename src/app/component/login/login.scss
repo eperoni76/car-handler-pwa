@@ -1,0 +1,228 @@
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem 1rem;
+
+  .login-card {
+    width: 100%;
+    max-width: 500px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    animation: slideUp 0.5s ease-out;
+
+    .card-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 3rem 2rem 2rem;
+      text-align: center;
+
+      .logo {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        animation: pulse 2s ease-in-out infinite;
+
+        i {
+          filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+        }
+      }
+
+      .title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.5px;
+      }
+
+      .subtitle {
+        font-size: 1rem;
+        opacity: 0.9;
+        margin: 0;
+      }
+    }
+
+    .card-body {
+      padding: 2rem;
+
+      form {
+        .form-floating {
+          margin-bottom: 1rem;
+
+          .form-control {
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 1.5rem 0.75rem 0.5rem;
+            height: auto;
+            min-height: 58px;
+            font-size: 1rem;
+            line-height: 1.5;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+
+            &:focus {
+              border-color: #667eea;
+              box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+            }
+
+            &:focus ~ label,
+            &:not(:placeholder-shown) ~ label {
+              transform: scale(0.85) translateY(-0.75rem) translateX(0.15rem);
+            }
+          }
+
+          label {
+            padding: 1rem 0.75rem;
+            color: #64748b;
+            transform-origin: 0 0;
+            transition: all 0.3s ease;
+
+            i {
+              opacity: 0.6;
+            }
+          }
+        }
+
+        .register-fields {
+          animation: slideDown 0.3s ease-out;
+        }
+
+        .btn-primary {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          border: none;
+          border-radius: 10px;
+          padding: 1rem;
+          font-weight: 600;
+          font-size: 1.1rem;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+
+          &:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+          }
+
+          &:active:not(:disabled) {
+            transform: translateY(0);
+          }
+
+          &:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+          }
+        }
+      }
+
+      .toggle-text {
+        color: #64748b;
+        margin: 0;
+
+        .btn-link {
+          color: #667eea;
+          text-decoration: none;
+          font-weight: 600;
+          padding: 0 0.25rem;
+          transition: all 0.3s ease;
+
+          &:hover:not(:disabled) {
+            color: #764ba2;
+            text-decoration: underline;
+          }
+
+          &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+          }
+        }
+      }
+
+      .alert {
+        border-radius: 10px;
+        border: none;
+        animation: slideDown 0.3s ease-out;
+
+        &.alert-danger {
+          background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+          color: white;
+
+          .btn-close {
+            filter: brightness(0) invert(1);
+          }
+        }
+
+        &.alert-success {
+          background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
+          color: white;
+
+          .btn-close {
+            filter: brightness(0) invert(1);
+          }
+        }
+
+        i {
+          font-size: 1.1rem;
+        }
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+// Responsive
+@media (max-width: 576px) {
+  .login-container {
+    padding: 1rem;
+
+    .login-card {
+      .card-header {
+        padding: 2rem 1.5rem 1.5rem;
+
+        .logo {
+          font-size: 3rem;
+        }
+
+        .title {
+          font-size: 1.5rem;
+        }
+      }
+
+      .card-body {
+        padding: 1.5rem;
+      }
+    }
+  }
+}
