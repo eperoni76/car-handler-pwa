@@ -6,4 +6,10 @@ export interface Assicurazione {
     dataFine: Date;
     costoAnnuale: number;
     coperture: string[];
+    documento?: {
+        nome: string;
+        url: string;
+        dimensione: number;
+        dataCaricamento: Date;
+    };
 }

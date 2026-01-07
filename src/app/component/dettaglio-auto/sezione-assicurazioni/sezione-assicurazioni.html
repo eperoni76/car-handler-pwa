@@ -40,7 +40,7 @@
           </div>
 
           @if (editingAssicurazioneId === assicurazioneAttiva.id && editAssicurazione) {
-            <!-- Form di modifica -->\n            <div class="row">
+            <div class="row">
               <div class="col-md-6 mb-3">
                 <label class="form-label fw-bold">Compagnia *</label>
                 <input type="text" class="form-control text-uppercase" [(ngModel)]="editAssicurazione.compagnia">
@@ -65,15 +65,38 @@
                 <label class="form-label fw-bold">Coperture (separate da virgola)</label>
                 <input type="text" class="form-control text-uppercase" placeholder="RCA, FURTO, INCENDIO" [(ngModel)]="editCopertureInput">
               </div>
+              <div class="col-12 mb-3">
+                <label class="form-label fw-bold">Contratto polizza</label>
+                @if (editAssicurazione.documento) {
+                  <div class="alert alert-info mb-2">
+                    <i class="bi bi-file-earmark-pdf me-1"></i>
+                    File attuale: {{ editAssicurazione.documento.nome }} ({{ formatFileSize(editAssicurazione.documento.dimensione) }})
+                  </div>
+                }
+                <input type="file" class="form-control" accept="application/pdf" (change)="onEditFileSelected($event)">
+                @if (editSelectedFile()) {
+                  <small class="text-muted d-block mt-1">
+                    <i class="bi bi-file-earmark-pdf me-1"></i>
+                    Nuovo file: {{ editSelectedFile()!.name }} ({{ formatFileSize(editSelectedFile()!.size) }})
+                  </small>
+                }
+              </div>
               <div class="col-12 text-end">
                 <button class="btn btn-sm btn-secondary me-2" (click)="cancelEdit()">
                   <i class="bi bi-x-lg me-1"></i>
                   Annulla
                 </button>
-                <button class="btn btn-sm btn-success" (click)="saveEditAssicurazione()">
-                  <i class="bi bi-check-lg me-1"></i>
-                  Salva
-                </button>
+                @if (uploadingFile()) {
+                  <button class="btn btn-sm btn-success" disabled>
+                    <span class="spinner-border spinner-border-sm me-2"></span>
+                    Salvataggio...
+                  </button>
+                } @else {
+                  <button class="btn btn-sm btn-success" (click)="saveEditAssicurazione()">
+                    <i class="bi bi-check-lg me-1"></i>
+                    Salva
+                  </button>
+                }
               </div>
             </div>
           } @else {
@@ -98,6 +121,19 @@
                 <div class="mb-2">
                   <strong>Costo Annuale:</strong> {{ formatPrice(assicurazioneAttiva.costoAnnuale) }}
                 </div>
+                @if (assicurazioneAttiva.documento) {
+                  <div class="mb-2">
+                    <strong>Contratto polizza:</strong>
+                    <a [href]="assicurazioneAttiva.documento.url" target="_blank" class="btn btn-sm btn-outline-primary ms-2">
+                      <i class="bi bi-file-earmark-pdf me-1"></i>
+                      {{ assicurazioneAttiva.documento.nome }}
+                    </a>
+                    <br>
+                    <small class="text-muted ms-5">
+                      {{ formatFileSize(assicurazioneAttiva.documento.dimensione) }} - Caricato il {{ formatDocumentDate(assicurazioneAttiva.documento.dataCaricamento) }}
+                    </small>
+                  </div>
+                }
               </div>
               <div class="col-md-4">
                 <strong>Coperture:</strong>
@@ -169,11 +205,29 @@
               <input type="text" class="form-control text-uppercase" placeholder="RCA, FURTO, INCENDIO" [(ngModel)]="copertureInput">
             </div>
 
+            <div class="col-12 mb-3">
+              <label class="form-label fw-bold">Contratto polizza</label>
+              <input type="file" class="form-control" accept="application/pdf" (change)="onFileSelected($event)">
+              @if (selectedFile()) {
+                <small class="text-muted d-block mt-1">
+                  <i class="bi bi-file-earmark-pdf me-1"></i>
+                  {{ selectedFile()!.name }} ({{ formatFileSize(selectedFile()!.size) }})
+                </small>
+              }
+            </div>
+
             <div class="col-12 text-end">
-              <button class="btn btn-success" (click)="addAssicurazione()">
-                <i class="bi bi-plus-lg me-1"></i>
-                Aggiungi
-              </button>
+              @if (uploadingFile()) {
+                <button class="btn btn-success" disabled>
+                  <span class="spinner-border spinner-border-sm me-2"></span>
+                  Caricamento...
+                </button>
+              } @else {
+                <button class="btn btn-success" (click)="addAssicurazione()">
+                  <i class="bi bi-plus-lg me-1"></i>
+                  Aggiungi
+                </button>
+              }
             </div>
           </div>
         </div>
@@ -216,15 +270,38 @@
                   <label class="form-label fw-bold">Coperture (separate da virgola)</label>
                   <input type="text" class="form-control text-uppercase" placeholder="RCA, FURTO, INCENDIO" [(ngModel)]="editCopertureInput">
                 </div>
+                <div class="col-12 mb-3">
+                  <label class="form-label fw-bold">Contratto polizza</label>
+                  @if (editAssicurazione.documento) {
+                    <div class="alert alert-info mb-2">
+                      <i class="bi bi-file-earmark-pdf me-1"></i>
+                      File attuale: {{ editAssicurazione.documento.nome }} ({{ formatFileSize(editAssicurazione.documento.dimensione) }})
+                    </div>
+                  }
+                  <input type="file" class="form-control" accept="application/pdf" (change)="onEditFileSelected($event)">
+                  @if (editSelectedFile()) {
+                    <small class="text-muted d-block mt-1">
+                      <i class="bi bi-file-earmark-pdf me-1"></i>
+                      Nuovo file: {{ editSelectedFile()!.name }} ({{ formatFileSize(editSelectedFile()!.size) }})
+                    </small>
+                  }
+                </div>
                 <div class="col-12 text-end">
                   <button class="btn btn-sm btn-secondary me-2" (click)="cancelEdit()">
                     <i class="bi bi-x-lg me-1"></i>
                     Annulla
                   </button>
-                  <button class="btn btn-sm btn-success" (click)="saveEditAssicurazione()">
-                    <i class="bi bi-check-lg me-1"></i>
-                    Salva
-                  </button>
+                  @if (uploadingFile()) {
+                    <button class="btn btn-sm btn-success" disabled>
+                      <span class="spinner-border spinner-border-sm me-2"></span>
+                      Salvataggio...
+                    </button>
+                  } @else {
+                    <button class="btn btn-sm btn-success" (click)="saveEditAssicurazione()">
+                      <i class="bi bi-check-lg me-1"></i>
+                      Salva
+                    </button>
+                  }
                 </div>
               </div>
             } @else {
@@ -244,6 +321,19 @@
                     <div class="mb-2">
                       <strong>Costo Annuale:</strong> {{ formatPrice(assicurazione.costoAnnuale) }}
                     </div>
+                    @if (assicurazione.documento) {
+                      <div class="mb-2">
+                        <strong>Contratto polizza:</strong>
+                        <a [href]="assicurazione.documento.url" target="_blank" class="btn btn-sm btn-outline-primary ms-2">
+                          <i class="bi bi-file-earmark-pdf me-1"></i>
+                          {{ assicurazione.documento.nome }}
+                        </a>
+                        <br>
+                        <small class="text-muted ms-5">
+                          {{ formatFileSize(assicurazione.documento.dimensione) }} - Caricato il {{ formatDocumentDate(assicurazione.documento.dataCaricamento) }}
+                        </small>
+                      </div>
+                    }
                   </div>
                   <div class="col-md-5">
                     <strong>Coperture:</strong>

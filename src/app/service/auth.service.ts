@@ -1,7 +1,8 @@
 import { Injectable, inject, signal, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
-import { Observable, of, catchError, tap, map } from 'rxjs';
+import { Observable, of, catchError, tap, map, from, switchMap } from 'rxjs';
+import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from '@angular/fire/auth';
 import { UserService } from './user.service';
 import { Utente } from '../model/utente';
 
@@ -12,6 +13,7 @@ export class AuthService {
   private userService = inject(UserService);
   private router = inject(Router);
   private platformId = inject(PLATFORM_ID);
+  private auth = inject(Auth);
 
   private currentUserSignal = signal<Utente | null>(null);
   currentUser = this.currentUserSignal.asReadonly();
@@ -30,20 +32,50 @@ export class AuthService {
   // Login - verifica che l'utente esista con nome, cognome e codice fiscale
   login(nome: string, cognome: string, codiceFiscale: string): Observable<{ success: boolean, message?: string, user?: Utente }> {
     return this.userService.getByCodiceFiscale(codiceFiscale).pipe(
-      map(user => {
+      switchMap(user => {
         if (!user) {
-          return { success: false, message: 'Utente non trovato. Registrati per continuare.' };
+          return of({ success: false, message: 'Utente non trovato. Registrati per continuare.' });
         }
 
         // Verifica nome e cognome (case insensitive)
         if (user.nome.toLowerCase() !== nome.toLowerCase() || 
             user.cognome.toLowerCase() !== cognome.toLowerCase()) {
-          return { success: false, message: 'Nome o cognome non corrispondono al codice fiscale.' };
+          return of({ success: false, message: 'Nome o cognome non corrispondono al codice fiscale.' });
         }
 
-        // Login riuscito
-        this.setCurrentUser(user);
-        return { success: true, user };
+        // Autentica su Firebase Auth
+        const email = this.generateEmailFromCF(codiceFiscale);
+        const password = codiceFiscale; // Usa il CF come password
+        
+        return from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
+          map(() => {
+            // Login riuscito
+            console.log('✅ Firebase Auth login riuscito');
+            this.setCurrentUser(user);
+            return { success: true, user };
+          }),
+          catchError(error => {
+            console.error('❌ Errore Firebase Auth durante il login:', error.code);
+            
+            // Se l'utente non esiste su Firebase Auth, crealo
+            if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+              console.log('🔧 Creazione account Firebase Auth per utente esistente...');
+              return from(createUserWithEmailAndPassword(this.auth, email, password)).pipe(
+                map(() => {
+                  console.log('✅ Account Firebase Auth creato');
+                  this.setCurrentUser(user);
+                  return { success: true, user };
+                }),
+                catchError(createError => {
+                  console.error('❌ Errore creazione account Firebase Auth:', createError);
+                  return of({ success: false, message: 'Errore durante il login. Riprova.' });
+                })
+              );
+            }
+            
+            return of({ success: false, message: 'Errore durante il login. Riprova.' });
+          })
+        );
       }),
       catchError(error => {
         console.error('Errore durante il login:', error);
@@ -74,26 +106,38 @@ export class AuthService {
   // Registrazione - crea un nuovo utente
   register(userData: Omit<Utente, 'id'>): Observable<{ success: boolean, message?: string, user?: Utente }> {
     return this.userService.checkCodiceFiscaleExists(userData.codiceFiscale).pipe(
-      map(exists => {
+      switchMap(exists => {
         if (exists) {
-          throw new Error('Codice fiscale già registrato. Usa il login per accedere.');
+          return of({ success: false, message: 'Codice fiscale già registrato. Usa il login per accedere.' });
         }
-        return exists;
-      }),
-      // Se non esiste, crea l'utente
-      tap(() => {}),
-      map(() => {
-        // Crea l'utente
-        this.userService.create(userData).subscribe({
-          next: (userId) => {
+
+        // Crea account Firebase Auth
+        const email = this.generateEmailFromCF(userData.codiceFiscale);
+        const password = userData.codiceFiscale;
+
+        return from(createUserWithEmailAndPassword(this.auth, email, password)).pipe(
+          switchMap(() => {
+            // Crea l'utente in Firestore
+            return from(new Promise<string>((resolve, reject) => {
+              this.userService.create(userData).subscribe({
+                next: (userId) => resolve(userId),
+                error: (error) => reject(error)
+              });
+            }));
+          }),
+          map((userId) => {
             const newUser: Utente = { ...userData, id: userId };
             this.setCurrentUser(newUser);
-          },
-          error: (error) => {
+            return { success: true, user: newUser };
+          }),
+          catchError(error => {
             console.error('Errore durante la registrazione:', error);
-          }
-        });
-        return { success: true };
+            const message = error.code === 'auth/email-already-in-use' 
+              ? 'Codice fiscale già registrato. Usa il login per accedere.'
+              : 'Errore durante la registrazione. Riprova.';
+            return of({ success: false, message });
+          })
+        );
       }),
       catchError(error => {
         console.error('Errore durante la registrazione:', error);
@@ -104,16 +148,23 @@ export class AuthService {
 
   // Logout
   logout(): void {
-    this.currentUserSignal.set(null);
-    if (this.isBrowser) {
-      localStorage.removeItem(this.STORAGE_KEY);
-    }
-    this.router.navigate(['/login']);
+    signOut(this.auth).then(() => {
+      this.currentUserSignal.set(null);
+      if (this.isBrowser) {
+        localStorage.removeItem(this.STORAGE_KEY);
+      }
+      this.router.navigate(['/login']);
+    });
   }
 
   // Verifica se l'utente è autenticato
   isAuthenticated(): boolean {
     return this.currentUserSignal() !== null;
+  }
+
+  // Genera email da codice fiscale (per Firebase Auth)
+  private generateEmailFromCF(codiceFiscale: string): string {
+    return `${codiceFiscale.toLowerCase()}@carhandler.local`;
   }
 
   // Imposta l'utente corrente

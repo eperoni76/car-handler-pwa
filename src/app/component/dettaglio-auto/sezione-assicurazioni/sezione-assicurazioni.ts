@@ -1,8 +1,9 @@
-import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Car } from '../../../model/car';
 import { Assicurazione } from '../../../model/assicurazione';
+import { StorageService } from '../../../service/storage.service';
 
 @Component({
   selector: 'app-sezione-assicurazioni',
@@ -15,6 +16,8 @@ export class SezioneAssicurazioni {
   @Input() car!: Car;
   @Output() carUpdated = new EventEmitter<Car>();
 
+  private storageService = inject(StorageService);
+
   assicurazioniOpen = signal(false);
   showNewAssicurazioneForm = signal(false);
   newAssicurazione: Assicurazione = this.getEmptyAssicurazione();
@@ -22,6 +25,9 @@ export class SezioneAssicurazioni {
   editingAssicurazioneId: string | null = null;
   editAssicurazione: Assicurazione | null = null;
   editCopertureInput: string = '';
+  selectedFile = signal<File | null>(null);
+  editSelectedFile = signal<File | null>(null);
+  uploadingFile = signal(false);
 
   toggleAssicurazioni() {
     this.assicurazioniOpen.set(!this.assicurazioniOpen());
@@ -32,6 +38,7 @@ export class SezioneAssicurazioni {
     if (!this.showNewAssicurazioneForm()) {
       this.newAssicurazione = this.getEmptyAssicurazione();
       this.copertureInput = '';
+      this.selectedFile.set(null);
     }
   }
 
@@ -80,7 +87,7 @@ export class SezioneAssicurazioni {
     return fine < oggi;
   }
 
-  addAssicurazione() {
+  async addAssicurazione() {
     if (!this.newAssicurazione.compagnia || !this.newAssicurazione.numeroPolizza ||
         !this.newAssicurazione.dataInizio || !this.newAssicurazione.dataFine) {
       alert('Compila tutti i campi obbligatori');
@@ -129,13 +136,51 @@ export class SezioneAssicurazioni {
       this.car.assicurazioni = [];
     }
 
+    // Upload del file se presente
+    if (this.selectedFile()) {
+      this.uploadingFile.set(true);
+      try {
+        const path = this.storageService.getAssicurazionePath(
+          this.car.targa,
+          assicurazioneToAdd.id,
+          this.selectedFile()!.name
+        );
+        
+        const url = await this.storageService.uploadFile(this.selectedFile()!, path);
+        
+        assicurazioneToAdd.documento = {
+          nome: this.selectedFile()!.name,
+          url: url,
+          dimensione: this.selectedFile()!.size,
+          dataCaricamento: new Date()
+        };
+      } catch (error) {
+        console.error('Errore durante l\'upload del file:', error);
+        alert('Errore durante il caricamento del file. L\'assicurazione verrà salvata senza documento.');
+      } finally {
+        this.uploadingFile.set(false);
+      }
+    }
+
     this.car.assicurazioni.push(assicurazioneToAdd);
     this.carUpdated.emit(this.car);
     this.toggleNewAssicurazioneForm();
   }
 
-  deleteAssicurazione(id: string) {
+  async deleteAssicurazione(id: string) {
     if (confirm('Sei sicuro di voler eliminare questa assicurazione?')) {
+      const assicurazione = this.car.assicurazioni?.find(a => a.id === id);
+      
+      // Elimina il documento se presente
+      if (assicurazione?.documento?.url) {
+        try {
+          const path = this.storageService.getPathFromUrl(assicurazione.documento.url);
+          await this.storageService.deleteFile(path);
+        } catch (error) {
+          console.error('Errore durante l\'eliminazione del file:', error);
+        }
+      }
+      
       this.car.assicurazioni = this.car.assicurazioni?.filter(a => a.id !== id);
       this.carUpdated.emit(this.car);
     }
@@ -145,15 +190,17 @@ export class SezioneAssicurazioni {
     this.editingAssicurazioneId = assicurazione.id;
     this.editAssicurazione = { ...assicurazione };
     this.editCopertureInput = assicurazione.coperture ? assicurazione.coperture.join(', ') : '';
+    this.editSelectedFile.set(null);
   }
 
   cancelEdit() {
     this.editingAssicurazioneId = null;
     this.editAssicurazione = null;
     this.editCopertureInput = '';
+    this.editSelectedFile.set(null);
   }
 
-  saveEditAssicurazione() {
+  async saveEditAssicurazione() {
     if (!this.editAssicurazione || !this.editAssicurazione.compagnia || !this.editAssicurazione.numeroPolizza ||
         !this.editAssicurazione.dataInizio || !this.editAssicurazione.dataFine) {
       alert('Compila tutti i campi obbligatori');
@@ -176,12 +223,47 @@ export class SezioneAssicurazioni {
 
     const index = this.car.assicurazioni?.findIndex(a => a.id === this.editingAssicurazioneId);
     if (index !== undefined && index !== -1 && this.car.assicurazioni) {
-      this.car.assicurazioni[index] = {
+      const updatedAssicurazione: Assicurazione = {
         ...this.editAssicurazione,
         compagnia: this.editAssicurazione.compagnia.toUpperCase(),
         numeroPolizza: this.editAssicurazione.numeroPolizza.toUpperCase(),
         coperture: coperture
       };
+
+      // Upload del nuovo file se presente
+      if (this.editSelectedFile()) {
+        this.uploadingFile.set(true);
+        try {
+          // Elimina il vecchio file se presente
+          if (updatedAssicurazione.documento?.url) {
+            const oldPath = this.storageService.getPathFromUrl(updatedAssicurazione.documento.url);
+            await this.storageService.deleteFile(oldPath);
+          }
+
+          // Upload del nuovo file
+          const path = this.storageService.getAssicurazionePath(
+            this.car.targa,
+            updatedAssicurazione.id,
+            this.editSelectedFile()!.name
+          );
+          
+          const url = await this.storageService.uploadFile(this.editSelectedFile()!, path);
+          
+          updatedAssicurazione.documento = {
+            nome: this.editSelectedFile()!.name,
+            url: url,
+            dimensione: this.editSelectedFile()!.size,
+            dataCaricamento: new Date()
+          };
+        } catch (error) {
+          console.error('Errore durante l\'upload del file:', error);
+          alert('Errore durante il caricamento del file. Le modifiche verranno salvate senza cambiare il documento.');
+        } finally {
+          this.uploadingFile.set(false);
+        }
+      }
+
+      this.car.assicurazioni[index] = updatedAssicurazione;
       this.carUpdated.emit(this.car);
       this.cancelEdit();
     }
@@ -207,5 +289,57 @@ export class SezioneAssicurazioni {
   formatPrice(price: number | undefined): string {
     if (!price) return '-';
     return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(price);
+  }
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      // Validazione dimensione file (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Il file è troppo grande. Dimensione massima consentita: 5MB');
+        input.value = '';
+        return;
+      }
+      this.selectedFile.set(file);
+    }
+  }
+
+  onEditFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      // Validazione dimensione file (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Il file è troppo grande. Dimensione massima consentita: 5MB');
+        input.value = '';
+        return;
+      }
+      this.editSelectedFile.set(file);
+    }
+  }
+
+  formatFileSize(bytes: number): string {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
+  formatDocumentDate(date: Date | any): string {
+    if (!date) return '-';
+    // Se è un timestamp di Firestore, convertilo
+    if (date.toDate && typeof date.toDate === 'function') {
+      return date.toDate().toLocaleDateString('it-IT');
+    }
+    // Se è già un oggetto Date
+    if (date instanceof Date) {
+      return date.toLocaleDateString('it-IT');
+    }
+    // Se è una stringa o numero, prova a convertirlo
+    try {
+      return new Date(date).toLocaleDateString('it-IT');
+    } catch {
+      return '-';
+    }
   }
 }
