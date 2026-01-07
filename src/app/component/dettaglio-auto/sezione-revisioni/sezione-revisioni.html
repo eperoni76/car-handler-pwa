@@ -1,0 +1,154 @@
+<div class="accordion-card">
+  <div class="accordion-header" (click)="toggleRevisioni()">
+    <div class="d-flex align-items-center">
+      <i class="bi bi-clipboard-check-fill me-2"></i>
+      <span class="accordion-title">Revisioni</span>
+    </div>
+    <i class="bi" [class.bi-chevron-up]="revisioniOpen()" [class.bi-chevron-down]="!revisioniOpen()"></i>
+  </div>
+
+  @if (revisioniOpen()) {
+    <div class="accordion-body">
+      
+      <!-- Stato revisione e data prossima -->
+      <div class="revisione-status mb-4">
+        @if (getStatoRevisione() === 'non_richiesta') {
+          <div class="alert alert-info d-flex align-items-center" role="alert">
+            <i class="bi bi-info-circle-fill fs-3 me-3"></i>
+            <div>
+              <strong>Revisione non ancora richiesta</strong><br>
+              Auto nei primi 4 anni. Prima revisione prevista per: <strong>{{ formatDate(getDataProssimaRevisione()) }}</strong>
+            </div>
+          </div>
+        }
+
+        @if (getStatoRevisione() === 'valida') {
+          <div class="alert alert-success d-flex align-items-center" role="alert">
+            <i class="bi bi-check-circle-fill fs-3 me-3"></i>
+            <div>
+              <strong>Revisione valida</strong><br>
+              Prossima revisione prevista per: <strong>{{ formatDate(getDataProssimaRevisione()) }}</strong>
+            </div>
+          </div>
+        }
+
+        @if (getStatoRevisione() === 'in_scadenza') {
+          <div class="alert alert-warning d-flex align-items-center" role="alert">
+            <i class="bi bi-exclamation-triangle-fill fs-3 me-3"></i>
+            <div>
+              <strong>Attenzione! Revisione in scadenza</strong><br>
+              Scadenza prevista per: <strong class="text-danger">{{ formatDate(getDataProssimaRevisione()) }}</strong><br>
+              <small>Manca meno di un mese alla scadenza. Prenota subito la revisione!</small>
+            </div>
+          </div>
+        }
+
+        @if (getStatoRevisione() === 'scaduta') {
+          <div class="alert alert-danger d-flex align-items-center" role="alert">
+            <i class="bi bi-x-circle-fill fs-3 me-3"></i>
+            <div>
+              <strong>Revisione scaduta!</strong><br>
+              @if (getDataProssimaRevisione()) {
+                Data scadenza: <strong>{{ formatDate(getDataProssimaRevisione()) }}</strong><br>
+              }
+              <small>Auto non in regola. Effettua immediatamente la revisione.</small>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Pulsante aggiungi revisione -->
+      <div class="mb-4">
+        <button class="btn btn-primary w-100" (click)="toggleNewRevisioneForm()">
+          <i class="bi bi-plus-circle me-2"></i>
+          {{ showNewRevisioneForm() ? 'Annulla' : 'Aggiungi Nuova Revisione' }}
+        </button>
+      </div>
+
+      <!-- Form nuova revisione -->
+      @if (showNewRevisioneForm()) {
+        <div class="new-revisione-form mb-4">
+          <h5 class="mb-3">Nuova Revisione</h5>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">Data *</label>
+              <input type="date" class="form-control" [(ngModel)]="newRevisione.data">
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">Chilometraggio *</label>
+              <input type="number" class="form-control" [(ngModel)]="newRevisione.chilometraggio" min="0">
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">Esito *</label>
+              <select class="form-control" [(ngModel)]="newRevisione.esito">
+                <option value="positiva">Positiva</option>
+                <option value="negativa">Negativa</option>
+              </select>
+            </div>
+
+            <div class="col-md-12 mb-3">
+              <label class="form-label fw-bold">Note</label>
+              <textarea 
+                class="form-control text-uppercase" 
+                [(ngModel)]="newRevisione.note" 
+                rows="3"
+                placeholder="Note aggiuntive (es. PRESCRIZIONI, DIFETTI RISCONTRATI...)"></textarea>
+            </div>
+
+            <div class="col-12 text-end">
+              <button class="btn btn-success" (click)="addRevisione()">
+                <i class="bi bi-plus-lg me-1"></i>
+                Aggiungi
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Storico revisioni -->
+      @if (getRevisioniOrdinate().length > 0) {
+        <h5 class="mb-3">Storico Revisioni</h5>
+        
+        @for (revisione of getRevisioniOrdinate(); track revisione.id) {
+          <div class="revisione-item mb-3" [class.revisione-negativa]="revisione.esito === 'negativa'">
+            <div class="d-flex justify-content-between align-items-start">
+              <div class="flex-grow-1">
+                <div class="row">
+                  <div class="col-md-3">
+                    <strong>Data:</strong> {{ formatDate(revisione.data) }}
+                  </div>
+                  <div class="col-md-3">
+                    <strong>Km:</strong> {{ revisione.chilometraggio.toLocaleString('it-IT') }}
+                  </div>
+                  <div class="col-md-3">
+                    <strong>Esito:</strong> 
+                    <span class="badge" [class.bg-success]="revisione.esito === 'positiva'" [class.bg-danger]="revisione.esito === 'negativa'">
+                      {{ revisione.esito === 'positiva' ? 'Positiva' : 'Negativa' }}
+                    </span>
+                  </div>
+                  @if (revisione.note) {
+                    <div class="col-12 mt-2">
+                      <strong>Note:</strong>
+                      <p class="mb-0 mt-1 text-muted">{{ revisione.note }}</p>
+                    </div>
+                  }
+                </div>
+              </div>
+              <button class="btn btn-sm btn-outline-danger ms-3" (click)="deleteRevisione(revisione.id)">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </div>
+        }
+      } @else {
+        <div class="alert alert-info" role="alert">
+          <i class="bi bi-info-circle me-2"></i>
+          Non ci sono revisioni registrate per questa auto.
+        </div>
+      }
+
+    </div>
+  }
+</div>

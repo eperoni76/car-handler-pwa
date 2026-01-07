@@ -1,0 +1,82 @@
+<div class="accordion-card">
+  <div class="accordion-header" (click)="toggleCoproprietari()">
+    <div class="d-flex align-items-center">
+      <i class="bi bi-people-fill me-2"></i>
+      <span class="accordion-title">Coproprietari</span>
+    </div>
+    <i class="bi" [class.bi-chevron-up]="coproprietariOpen()" [class.bi-chevron-down]="!coproprietariOpen()"></i>
+  </div>
+
+  @if (coproprietariOpen()) {
+    <div class="accordion-body">
+      
+      <!-- Lista coproprietari esistenti -->
+      @if (car.coProprietari && car.coProprietari.length > 0) {
+        <h5 class="mb-3">Coproprietari attuali</h5>
+        <div class="coproprietari-list mb-4">
+          @for (coproprietario of car.coProprietari; track coproprietario.codiceFiscale) {
+            <div class="coproprietario-item mb-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <div class="fw-bold">{{ coproprietario.nome }} {{ coproprietario.cognome }}</div>
+                  <small class="text-muted text-uppercase">CF: {{ coproprietario.codiceFiscale }}</small>
+                </div>
+                <button class="btn btn-sm btn-outline-danger" (click)="removeCoproprietario(coproprietario.codiceFiscale)">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="alert alert-info" role="alert">
+          <i class="bi bi-info-circle me-2"></i>
+          Non ci sono coproprietari per questa auto.
+        </div>
+      }
+
+      <!-- Pulsante aggiungi coproprietario -->
+      <div class="mb-4">
+        <button class="btn btn-primary w-100" (click)="toggleNewCoproprietarioForm()">
+          <i class="bi bi-plus-circle me-2"></i>
+          {{ showNewCoproprietarioForm() ? 'Annulla' : 'Aggiungi Coproprietario' }}
+        </button>
+      </div>
+
+      <!-- Form nuovo coproprietario -->
+      @if (showNewCoproprietarioForm()) {
+        <div class="new-coproprietario-form">
+          <h5 class="mb-3">Nuovo Coproprietario</h5>
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label class="form-label fw-bold">Nome *</label>
+              <input type="text" class="form-control text-uppercase" [(ngModel)]="newCoproprietario.nome">
+            </div>
+
+            <div class="col-md-4 mb-3">
+              <label class="form-label fw-bold">Cognome *</label>
+              <input type="text" class="form-control text-uppercase" [(ngModel)]="newCoproprietario.cognome">
+            </div>
+
+            <div class="col-md-4 mb-3">
+              <label class="form-label fw-bold">Codice Fiscale *</label>
+              <input type="text" class="form-control text-uppercase" [(ngModel)]="newCoproprietario.codiceFiscale" maxlength="16">
+            </div>
+
+            <div class="col-12 text-end">
+              <button class="btn btn-success" (click)="addCoproprietario()">
+                <i class="bi bi-plus-lg me-1"></i>
+                Aggiungi
+              </button>
+            </div>
+          </div>
+          <small class="text-muted">
+            <i class="bi bi-info-circle me-1"></i>
+            Se l'utente non esiste verrà creato automaticamente nel sistema.
+          </small>
+        </div>
+      }
+
+    </div>
+  }
+</div>

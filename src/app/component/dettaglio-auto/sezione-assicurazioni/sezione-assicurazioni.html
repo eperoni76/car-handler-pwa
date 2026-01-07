@@ -1,0 +1,170 @@
+<div class="accordion-card">
+  <div class="accordion-header" (click)="toggleAssicurazioni()">
+    <div class="d-flex align-items-center">
+      <i class="bi bi-shield-fill-check me-2"></i>
+      <span class="accordion-title">Assicurazioni</span>
+    </div>
+    <i class="bi" [class.bi-chevron-up]="assicurazioniOpen()" [class.bi-chevron-down]="!assicurazioniOpen()"></i>
+  </div>
+
+  @if (assicurazioniOpen()) {
+    <div class="accordion-body">
+      
+      <!-- Banner allarme nessuna assicurazione attiva -->
+      @if (!getAssicurazioneAttiva()) {
+        <div class="alert alert-warning d-flex align-items-center" role="alert">
+          <i class="bi bi-exclamation-triangle-fill fs-3 me-3"></i>
+          <div>
+            <strong>Attenzione!</strong> Questa auto non ha un'assicurazione attiva. 
+            Provvedi al più presto a stipularne una.
+          </div>
+        </div>
+      }
+
+      <!-- Assicurazione attiva -->
+      @if (getAssicurazioneAttiva(); as assicurazioneAttiva) {
+        <div class="assicurazione-attiva mb-4" 
+             [class.in-scadenza]="isAssicurazioneInScadenza(assicurazioneAttiva.dataFine)"
+             [class.scaduta]="isAssicurazioneScaduta(assicurazioneAttiva.dataFine)">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0">
+              <i class="bi bi-shield-check text-success me-2"></i>
+              Assicurazione Attiva
+            </h5>
+            @if (isAssicurazioneInScadenza(assicurazioneAttiva.dataFine)) {
+              <span class="badge bg-warning">In scadenza</span>
+            }
+            @if (isAssicurazioneScaduta(assicurazioneAttiva.dataFine)) {
+              <span class="badge bg-danger">Scaduta</span>
+            }
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <strong>Compagnia:</strong> {{ assicurazioneAttiva.compagnia }}
+            </div>
+            <div class="col-md-6 mb-3">
+              <strong>Polizza:</strong> {{ assicurazioneAttiva.numeroPolizza }}
+            </div>
+            <div class="col-md-4 mb-3">
+              <strong>Data Inizio:</strong> {{ formatDate(assicurazioneAttiva.dataInizio) }}
+            </div>
+            <div class="col-md-4 mb-3">
+              <strong>Data Fine:</strong> 
+              <span [class.text-danger]="isAssicurazioneInScadenza(assicurazioneAttiva.dataFine) || isAssicurazioneScaduta(assicurazioneAttiva.dataFine)">
+                {{ formatDate(assicurazioneAttiva.dataFine) }}
+              </span>
+            </div>
+            <div class="col-md-4 mb-3">
+              <strong>Costo Annuale:</strong> {{ formatPrice(assicurazioneAttiva.costoAnnuale) }}
+            </div>
+            @if (assicurazioneAttiva.coperture && assicurazioneAttiva.coperture.length > 0) {
+              <div class="col-12 mb-3">
+                <strong>Coperture:</strong>
+                <p class="mb-0 mt-1">{{ assicurazioneAttiva.coperture.join(', ') }}</p>
+              </div>
+            }
+          </div>
+          <div class="text-end">
+            <button class="btn btn-sm btn-outline-danger" (click)="deleteAssicurazione(assicurazioneAttiva.id)">
+              <i class="bi bi-trash me-1"></i>
+              Elimina
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- Pulsante aggiungi nuova assicurazione -->
+      <div class="mb-4">
+        <button class="btn btn-primary w-100" (click)="toggleNewAssicurazioneForm()">
+          <i class="bi bi-plus-circle me-2"></i>
+          {{ showNewAssicurazioneForm() ? 'Annulla' : 'Aggiungi Nuova Assicurazione' }}
+        </button>
+      </div>
+
+      <!-- Form nuova assicurazione -->
+      @if (showNewAssicurazioneForm()) {
+        <div class="new-assicurazione-form mb-4">
+          <h5 class="mb-3">Nuova Assicurazione</h5>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">Compagnia *</label>
+              <input type="text" class="form-control text-uppercase" [(ngModel)]="newAssicurazione.compagnia">
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">Numero Polizza *</label>
+              <input type="text" class="form-control text-uppercase" [(ngModel)]="newAssicurazione.numeroPolizza">
+            </div>
+
+            <div class="col-md-4 mb-3">
+              <label class="form-label fw-bold">Data Inizio *</label>
+              <input type="date" class="form-control" [(ngModel)]="newAssicurazione.dataInizio">
+            </div>
+
+            <div class="col-md-4 mb-3">
+              <label class="form-label fw-bold">Data Fine *</label>
+              <input type="date" class="form-control" [(ngModel)]="newAssicurazione.dataFine">
+            </div>
+
+            <div class="col-md-4 mb-3">
+              <label class="form-label fw-bold">Costo Annuale (€) *</label>
+              <input type="number" class="form-control" [(ngModel)]="newAssicurazione.costoAnnuale">
+            </div>
+
+            <div class="col-12 mb-3">
+              <label class="form-label fw-bold">Coperture (separate da virgola)</label>
+              <input type="text" class="form-control text-uppercase" placeholder="RCA, FURTO, INCENDIO">
+            </div>
+
+            <div class="col-12 text-end">
+              <button class="btn btn-success" (click)="addAssicurazione()">
+                <i class="bi bi-plus-lg me-1"></i>
+                Aggiungi
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Storico assicurazioni -->
+      @if (getStoricoAssicurazioni().length > 0) {
+        <hr class="my-4">
+        <h5 class="mb-3">Storico Assicurazioni</h5>
+        
+        @for (assicurazione of getStoricoAssicurazioni(); track assicurazione.id) {
+          <div class="assicurazione-item mb-3" 
+               [class.in-scadenza]="isAssicurazioneInScadenza(assicurazione.dataFine)"
+               [class.scaduta]="isAssicurazioneScaduta(assicurazione.dataFine)">
+            <div class="d-flex justify-content-between align-items-start">
+              <div class="flex-grow-1">
+                <div class="row">
+                  <div class="col-md-4">
+                    <strong>Compagnia:</strong> {{ assicurazione.compagnia }}
+                  </div>
+                  <div class="col-md-4">
+                    <strong>Polizza:</strong> {{ assicurazione.numeroPolizza }}
+                  </div>
+                  <div class="col-md-4">
+                    <strong>Costo Annuale:</strong> {{ formatPrice(assicurazione.costoAnnuale) }}
+                  </div>
+                  <div class="col-md-6 mt-2">
+                    <strong>Periodo:</strong> {{ formatDate(assicurazione.dataInizio) }} - {{ formatDate(assicurazione.dataFine) }}
+                  </div>
+                  @if (assicurazione.coperture && assicurazione.coperture.length > 0) {
+                    <div class="col-12 mt-2">
+                      <strong>Coperture:</strong> {{ assicurazione.coperture.join(', ') }}
+                    </div>
+                  }
+                </div>
+              </div>
+              <button class="btn btn-sm btn-outline-danger ms-3" (click)="deleteAssicurazione(assicurazione.id)">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  }
+</div>
