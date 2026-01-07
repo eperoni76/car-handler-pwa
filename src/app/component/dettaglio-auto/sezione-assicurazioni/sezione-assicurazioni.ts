@@ -18,6 +18,7 @@ export class SezioneAssicurazioni {
   assicurazioniOpen = signal(false);
   showNewAssicurazioneForm = signal(false);
   newAssicurazione: Assicurazione = this.getEmptyAssicurazione();
+  copertureInput: string = '';
 
   toggleAssicurazioni() {
     this.assicurazioniOpen.set(!this.assicurazioniOpen());
@@ -27,6 +28,7 @@ export class SezioneAssicurazioni {
     this.showNewAssicurazioneForm.set(!this.showNewAssicurazioneForm());
     if (!this.showNewAssicurazioneForm()) {
       this.newAssicurazione = this.getEmptyAssicurazione();
+      this.copertureInput = '';
     }
   }
 
@@ -104,6 +106,12 @@ export class SezioneAssicurazioni {
       }
     }
 
+    // Processa le coperture dall'input separato da virgole
+    const coperture = this.copertureInput
+      .split(',')
+      .map(c => c.trim().toUpperCase())
+      .filter(c => c.length > 0);
+
     const assicurazioneToAdd: Assicurazione = {
       id: Date.now().toString(),
       compagnia: this.newAssicurazione.compagnia.toUpperCase(),
@@ -111,7 +119,7 @@ export class SezioneAssicurazioni {
       dataInizio: this.newAssicurazione.dataInizio,
       dataFine: this.newAssicurazione.dataFine,
       costoAnnuale: this.newAssicurazione.costoAnnuale || 0,
-      coperture: []
+      coperture: coperture
     };
 
     if (!this.car.assicurazioni) {
