@@ -1,7 +1,7 @@
 {
   "configVersion": 1,
-  "timestamp": 1767806670826,
-  "index": "https://eperoni76.github.io/car-handler-pwa/index.csr.html",
+  "timestamp": 1767808861419,
+  "index": "/car-handler-pwa/index.csr.html",
   "assetGroups": [
     {
       "name": "app",
@@ -10,14 +10,7 @@
       "cacheQueryOptions": {
         "ignoreVary": true
       },
-      "urls": [
-        "https://eperoni76.github.io/car-handler-pwa/favicon.ico",
-        "https://eperoni76.github.io/car-handler-pwa/index.csr.html",
-        "https://eperoni76.github.io/car-handler-pwa/index.html",
-        "https://eperoni76.github.io/car-handler-pwa/main-Q22D3NPD.js",
-        "https://eperoni76.github.io/car-handler-pwa/manifest.webmanifest",
-        "https://eperoni76.github.io/car-handler-pwa/styles-5WMU6NTG.css"
-      ],
+      "urls": [],
       "patterns": []
     },
     {
@@ -27,40 +20,12 @@
       "cacheQueryOptions": {
         "ignoreVary": true
       },
-      "urls": [
-        "https://eperoni76.github.io/car-handler-pwa/icons/icon-128x128.png",
-        "https://eperoni76.github.io/car-handler-pwa/icons/icon-144x144.png",
-        "https://eperoni76.github.io/car-handler-pwa/icons/icon-152x152.png",
-        "https://eperoni76.github.io/car-handler-pwa/icons/icon-192x192.png",
-        "https://eperoni76.github.io/car-handler-pwa/icons/icon-384x384.png",
-        "https://eperoni76.github.io/car-handler-pwa/icons/icon-512x512.png",
-        "https://eperoni76.github.io/car-handler-pwa/icons/icon-72x72.png",
-        "https://eperoni76.github.io/car-handler-pwa/icons/icon-96x96.png",
-        "https://eperoni76.github.io/car-handler-pwa/media/bootstrap-icons-CVBWLLHT.woff2",
-        "https://eperoni76.github.io/car-handler-pwa/media/bootstrap-icons-VQNJTM6Q.woff"
-      ],
+      "urls": [],
       "patterns": []
     }
   ],
   "dataGroups": [],
-  "hashTable": {
-    "https://eperoni76.github.io/car-handler-pwa/favicon.ico": "e7af9869c82cbb1c80073dc6a19211af9f14e512",
-    "https://eperoni76.github.io/car-handler-pwa/icons/icon-128x128.png": "e7af9869c82cbb1c80073dc6a19211af9f14e512",
-    "https://eperoni76.github.io/car-handler-pwa/icons/icon-144x144.png": "8fa07c029916ff0321d9eacb03cba6f732968491",
-    "https://eperoni76.github.io/car-handler-pwa/icons/icon-152x152.png": "6ea61855840cc2741ab5c843846273ca6d539f15",
-    "https://eperoni76.github.io/car-handler-pwa/icons/icon-192x192.png": "10a805b62e6d7b0fa042955e1f596de1d2a8fb88",
-    "https://eperoni76.github.io/car-handler-pwa/icons/icon-384x384.png": "acba0304a8569b49d164af6a54f2fbf37839e2f4",
-    "https://eperoni76.github.io/car-handler-pwa/icons/icon-512x512.png": "0b5a2e9e1906f0b39d69e71d9d4a17ea077a84a7",
-    "https://eperoni76.github.io/car-handler-pwa/icons/icon-72x72.png": "53554dc22e735cced8efe91976737f289024e3e4",
-    "https://eperoni76.github.io/car-handler-pwa/icons/icon-96x96.png": "c9476385eb517e6326e30b168b3dd1b0cac06fbb",
-    "https://eperoni76.github.io/car-handler-pwa/index.csr.html": "7dcb33b9439455d5a7f6e5e1db47df917a23228a",
-    "https://eperoni76.github.io/car-handler-pwa/index.html": "9e126d9ae679ed8f2fa6839eeda6c1e780fd7183",
-    "https://eperoni76.github.io/car-handler-pwa/main-Q22D3NPD.js": "1b9fa116442f4d5771e78b54c3cdb1f20ddc94f4",
-    "https://eperoni76.github.io/car-handler-pwa/manifest.webmanifest": "26395621532aeae54b7ceea0fa760034dc0283fa",
-    "https://eperoni76.github.io/car-handler-pwa/media/bootstrap-icons-CVBWLLHT.woff2": "b441fcff939e24fa0906a37b7788788b9fddbb68",
-    "https://eperoni76.github.io/car-handler-pwa/media/bootstrap-icons-VQNJTM6Q.woff": "762010c79b4a05e1131fc8fb3b1aeff324d8033f",
-    "https://eperoni76.github.io/car-handler-pwa/styles-5WMU6NTG.css": "004e79f66fecb2cac368321e944f6934d800c35b"
-  },
+  "hashTable": {},
   "navigationUrls": [
     {
       "positive": true,
