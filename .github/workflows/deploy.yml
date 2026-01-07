@@ -40,6 +40,13 @@ jobs:
       - name: Build Angular app
         run: npx ng build --configuration production
 
+      - name: List dist directory structure
+        run: |
+          echo "=== Dist directory structure ==="
+          ls -la dist/ || echo "No dist folder"
+          ls -la dist/*/ || echo "No subdirectories"
+          find dist -type f -name "index.html" || echo "No index.html found"
+
       - name: Copy index.html to 404.html for SPA routing
         run: cp dist/browser/index.html dist/browser/404.html
 
