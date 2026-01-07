@@ -54,7 +54,10 @@ export class SezioneAssicurazioni {
       return [];
     }
 
+    const assicurazioneAttiva = this.getAssicurazioneAttiva();
+    
     return [...this.car.assicurazioni]
+      .filter(ass => !assicurazioneAttiva || ass.id !== assicurazioneAttiva.id)
       .sort((a, b) => new Date(b.dataInizio).getTime() - new Date(a.dataInizio).getTime());
   }
 

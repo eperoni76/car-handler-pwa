@@ -75,7 +75,10 @@ export class DettaglioAuto implements OnInit {
   }
 
   onCarUpdated(updatedCar: Car): void {
-    this.carService.update(updatedCar.targa, updatedCar).subscribe({
+    // Pulisci l'oggetto rimuovendo i campi undefined (Firestore non li accetta)
+    const cleanedCar = this.cleanUndefinedFields(updatedCar);
+    
+    this.carService.update(updatedCar.targa, cleanedCar).subscribe({
       next: () => {
         this.successMessage.set('Modifiche salvate con successo');
         this.car.set(updatedCar);
@@ -87,6 +90,32 @@ export class DettaglioAuto implements OnInit {
         setTimeout(() => this.errorMessage.set(null), 3000);
       }
     });
+  }
+
+  private cleanUndefinedFields(obj: any): any {
+    if (obj === null || obj === undefined) {
+      return null;
+    }
+    
+    if (obj instanceof Date) {
+      return obj;
+    }
+    
+    if (Array.isArray(obj)) {
+      return obj.map(item => this.cleanUndefinedFields(item));
+    }
+    
+    if (typeof obj === 'object') {
+      const cleaned: any = {};
+      for (const key in obj) {
+        if (obj.hasOwnProperty(key) && obj[key] !== undefined) {
+          cleaned[key] = this.cleanUndefinedFields(obj[key]);
+        }
+      }
+      return cleaned;
+    }
+    
+    return obj;
   }
 
   goBack(): void {
