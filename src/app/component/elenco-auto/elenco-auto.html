@@ -45,7 +45,8 @@
                 <th>Marca</th>
                 <th>Modello</th>
                 <th>Anno</th>
-                <th class="d-none d-md-table-cell">Colore</th>
+                <th class="d-none d-md-table-cell">Ruolo</th>
+                <th class="d-none d-lg-table-cell">Colore</th>
                 <th class="d-none d-lg-table-cell">Data Acquisto</th>
                 <th class="d-none d-lg-table-cell">Prezzo Acquisto</th>
                 <th class="text-end">Azioni</th>
@@ -58,7 +59,12 @@
                   <td>{{ car.marca }}</td>
                   <td>{{ car.modello }}</td>
                   <td>{{ car.anno }}</td>
-                  <td class="d-none d-md-table-cell">{{ car.colore }}</td>
+                  <td class="d-none d-md-table-cell">
+                    <span class="badge" [class.bg-primary]="getRuolo(car) === 'Proprietario'" [class.bg-secondary]="getRuolo(car) === 'Coproprietario'">
+                      {{ getRuolo(car) }}
+                    </span>
+                  </td>
+                  <td class="d-none d-lg-table-cell">{{ car.colore }}</td>
                   <td class="d-none d-lg-table-cell">{{ formatDate(car.dataDiAcquisto) }}</td>
                   <td class="d-none d-lg-table-cell">{{ formatPrice(car.prezzoDiAcquisto) }}</td>
                   <td class="text-end">

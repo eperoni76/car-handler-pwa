@@ -53,4 +53,20 @@ export class ElencoAuto implements OnInit {
     if (!price) return '-';
     return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(price);
   }
+
+  getRuolo(car: Car): string {
+    const user = this.authService.currentUser();
+    if (!user) return '-';
+
+    if (car.proprietario.id === user.id) {
+      return 'Proprietario';
+    }
+
+    const isComproprietario = car.coProprietari?.some(cp => cp.id === user.id);
+    if (isComproprietario) {
+      return 'Coproprietario';
+    }
+
+    return '-';
+  }
 }
