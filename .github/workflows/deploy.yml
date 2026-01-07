@@ -46,6 +46,9 @@ jobs:
       - name: Remove README to prevent GitHub Pages from using it
         run: rm -f dist/car-handler-pwa/browser/README.md
 
+      - name: Create .nojekyll file to disable Jekyll processing
+        run: touch dist/car-handler-pwa/browser/.nojekyll
+
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
