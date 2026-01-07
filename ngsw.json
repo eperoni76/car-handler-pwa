@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1767797846867,
+  "timestamp": 1767797910452,
   "index": "https://eperoni76.github.io/car-handler-pwa/index.csr.html",
   "assetGroups": [
     {
@@ -13,8 +13,7 @@
       "urls": [
         "https://eperoni76.github.io/car-handler-pwa/favicon.ico",
         "https://eperoni76.github.io/car-handler-pwa/index.csr.html",
-        "https://eperoni76.github.io/car-handler-pwa/index.html",
-        "https://eperoni76.github.io/car-handler-pwa/main-SRBRFG5W.js",
+        "https://eperoni76.github.io/car-handler-pwa/main-UTCYFFQ3.js",
         "https://eperoni76.github.io/car-handler-pwa/manifest.webmanifest",
         "https://eperoni76.github.io/car-handler-pwa/styles-5WMU6NTG.css"
       ],
@@ -53,9 +52,8 @@
     "https://eperoni76.github.io/car-handler-pwa/icons/icon-512x512.png": "1de182f76f7329dfa8f9fcdd1fdcdd695bea6a99",
     "https://eperoni76.github.io/car-handler-pwa/icons/icon-72x72.png": "aa88a6096bd973be7f6d7a5489bfa6bc2463f8c4",
     "https://eperoni76.github.io/car-handler-pwa/icons/icon-96x96.png": "7fb8f59c30ce2ff12c700321a0b39e14b3dc8f95",
-    "https://eperoni76.github.io/car-handler-pwa/index.csr.html": "23363022122389db3bbf8c3ac670efc606636fb7",
-    "https://eperoni76.github.io/car-handler-pwa/index.html": "9e126d9ae679ed8f2fa6839eeda6c1e780fd7183",
-    "https://eperoni76.github.io/car-handler-pwa/main-SRBRFG5W.js": "f18722ae95f657587f1d3c9b37418d10a5cd1f83",
+    "https://eperoni76.github.io/car-handler-pwa/index.csr.html": "f8bb27fd1928ab74bff4737a6a5f505b6de2dc6c",
+    "https://eperoni76.github.io/car-handler-pwa/main-UTCYFFQ3.js": "0898a3aee80332dc87d9befca7196b1607b3c784",
     "https://eperoni76.github.io/car-handler-pwa/manifest.webmanifest": "b8ed132e89d4cdb954ae487320b599d576124ef4",
     "https://eperoni76.github.io/car-handler-pwa/media/bootstrap-icons-CVBWLLHT.woff2": "b441fcff939e24fa0906a37b7788788b9fddbb68",
     "https://eperoni76.github.io/car-handler-pwa/media/bootstrap-icons-VQNJTM6Q.woff": "762010c79b4a05e1131fc8fb3b1aeff324d8033f",
