@@ -19,6 +19,9 @@ export class SezioneAssicurazioni {
   showNewAssicurazioneForm = signal(false);
   newAssicurazione: Assicurazione = this.getEmptyAssicurazione();
   copertureInput: string = '';
+  editingAssicurazioneId: string | null = null;
+  editAssicurazione: Assicurazione | null = null;
+  editCopertureInput: string = '';
 
   toggleAssicurazioni() {
     this.assicurazioniOpen.set(!this.assicurazioniOpen());
@@ -135,6 +138,52 @@ export class SezioneAssicurazioni {
     if (confirm('Sei sicuro di voler eliminare questa assicurazione?')) {
       this.car.assicurazioni = this.car.assicurazioni?.filter(a => a.id !== id);
       this.carUpdated.emit(this.car);
+    }
+  }
+
+  startEditAssicurazione(assicurazione: Assicurazione) {
+    this.editingAssicurazioneId = assicurazione.id;
+    this.editAssicurazione = { ...assicurazione };
+    this.editCopertureInput = assicurazione.coperture ? assicurazione.coperture.join(', ') : '';
+  }
+
+  cancelEdit() {
+    this.editingAssicurazioneId = null;
+    this.editAssicurazione = null;
+    this.editCopertureInput = '';
+  }
+
+  saveEditAssicurazione() {
+    if (!this.editAssicurazione || !this.editAssicurazione.compagnia || !this.editAssicurazione.numeroPolizza ||
+        !this.editAssicurazione.dataInizio || !this.editAssicurazione.dataFine) {
+      alert('Compila tutti i campi obbligatori');
+      return;
+    }
+
+    const inizio = new Date(this.editAssicurazione.dataInizio);
+    const fine = new Date(this.editAssicurazione.dataFine);
+
+    if (fine <= inizio) {
+      alert('La data di fine deve essere successiva alla data di inizio');
+      return;
+    }
+
+    // Processa le coperture dall'input separato da virgole
+    const coperture = this.editCopertureInput
+      .split(',')
+      .map(c => c.trim().toUpperCase())
+      .filter(c => c.length > 0);
+
+    const index = this.car.assicurazioni?.findIndex(a => a.id === this.editingAssicurazioneId);
+    if (index !== undefined && index !== -1 && this.car.assicurazioni) {
+      this.car.assicurazioni[index] = {
+        ...this.editAssicurazione,
+        compagnia: this.editAssicurazione.compagnia.toUpperCase(),
+        numeroPolizza: this.editAssicurazione.numeroPolizza.toUpperCase(),
+        coperture: coperture
+      };
+      this.carUpdated.emit(this.car);
+      this.cancelEdit();
     }
   }
 

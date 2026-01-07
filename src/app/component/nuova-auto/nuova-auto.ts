@@ -76,7 +76,7 @@ export class NuovaAuto {
           proprietario: user,
           coProprietari: [],
           assicurazioni: [],
-          tagliandi: [],
+          manutenzioni: [],
           revisioni: []
         };
 
