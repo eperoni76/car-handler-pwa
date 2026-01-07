@@ -1,9 +1,12 @@
 {
-  "name": "car-handler-pwa",
-  "short_name": "car-handler-pwa",
+  "name": "Car Handler",
+  "short_name": "Car Handler",
+  "description": "Gestisci le tue auto, assicurazioni, tagliandi e revisioni",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",
+  "theme_color": "#667eea",
+  "background_color": "#ffffff",
   "icons": [
     {
       "src": "icons/icon-72x72.png",
