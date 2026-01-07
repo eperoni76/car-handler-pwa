@@ -1,0 +1,107 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="card-header">
+      <div class="logo">
+        <i class="bi bi-car-front-fill"></i>
+      </div>
+      <h2 class="title">{{ isRegisterMode() ? 'Registrati' : 'Benvenuto' }}</h2>
+      <p class="subtitle">{{ isRegisterMode() ? 'Crea il tuo account' : 'Accedi al tuo account' }}</p>
+    </div>
+
+    <div class="card-body">
+      <!-- Alert messaggi -->
+      @if (errorMessage()) {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <i class="bi bi-exclamation-circle-fill me-2"></i>
+          {{ errorMessage() }}
+          <button type="button" class="btn-close" (click)="errorMessage.set(null)"></button>
+        </div>
+      }
+
+      @if (successMessage()) {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <i class="bi bi-check-circle-fill me-2"></i>
+          {{ successMessage() }}
+          <button type="button" class="btn-close" (click)="successMessage.set(null)"></button>
+        </div>
+      }
+
+      <form (ngSubmit)="onSubmit()">
+        <!-- Campi per registrazione -->
+        @if (isRegisterMode()) {
+          <div class="register-fields">
+            <!-- Nome -->
+            <div class="form-floating mb-3">
+              <input 
+                type="text" 
+                class="form-control text-uppercase" 
+                id="nome" 
+                placeholder="Nome"
+                [(ngModel)]="nome"
+                name="nome"
+                required>
+              <label for="nome">
+                <i class="bi bi-person-fill me-2"></i>Nome
+              </label>
+            </div>
+
+            <!-- Cognome -->
+            <div class="form-floating mb-3">
+              <input 
+                type="text" 
+                class="form-control text-uppercase" 
+                id="cognome" 
+                placeholder="Cognome"
+                [(ngModel)]="cognome"
+                name="cognome"
+                required>
+              <label for="cognome">
+                <i class="bi bi-person-fill me-2"></i>Cognome
+              </label>
+            </div>
+          </div>
+        }
+
+        <!-- Codice Fiscale -->
+        <div class="form-floating mb-3">
+          <input 
+            type="text" 
+            class="form-control text-uppercase" 
+            id="codiceFiscale" 
+            placeholder="Codice Fiscale"
+            [(ngModel)]="codiceFiscale"
+            name="codiceFiscale"
+            maxlength="16"
+            required>
+          <label for="codiceFiscale">
+            <i class="bi bi-credit-card-fill me-2"></i>Codice Fiscale
+          </label>
+        </div>
+
+        <!-- Pulsante Submit -->
+        <button 
+          type="submit" 
+          class="btn btn-primary btn-lg w-100 mb-3"
+          [disabled]="isLoading()">
+          @if (isLoading()) {
+            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+            {{ isRegisterMode() ? 'Registrazione...' : 'Accesso...' }}
+          } @else {
+            <i class="bi" [class.bi-box-arrow-in-right]="!isRegisterMode()" [class.bi-person-plus-fill]="isRegisterMode()" class="me-2"></i>
+            {{ isRegisterMode() ? 'Registrati' : 'Accedi' }}
+          }
+        </button>
+      </form>
+
+      <!-- Toggle login/register -->
+      <div class="text-center">
+        <p class="toggle-text">
+          {{ isRegisterMode() ? 'Hai già un account?' : 'Non hai un account?' }}
+          <button type="button" class="btn btn-link" (click)="toggleMode()" [disabled]="isLoading()">
+            {{ isRegisterMode() ? 'Accedi' : 'Registrati' }}
+          </button>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
