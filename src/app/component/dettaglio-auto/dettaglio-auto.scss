@@ -1,0 +1,250 @@
+.dettaglio-auto-container {
+  padding: 2rem 0;
+  min-height: 100vh;
+
+  .page-header {
+    margin-bottom: 2rem;
+
+    .page-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0;
+      display: flex;
+      align-items: center;
+
+      i {
+        color: #667eea;
+      }
+    }
+
+    .page-subtitle {
+      color: #64748b;
+      margin: 0.5rem 0 0 0;
+    }
+  }
+
+  .alert {
+    border-radius: 10px;
+    border: none;
+    animation: slideDown 0.3s ease-out;
+  }
+
+  .accordion-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .accordion-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 6px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .accordion-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 1.5rem 2rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: linear-gradient(135deg, #5568d3 0%, #653a8b 100%);
+      }
+
+      .accordion-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+
+      i {
+        font-size: 1.5rem;
+      }
+    }
+
+    .accordion-body {
+      padding: 2rem;
+      animation: slideDown 0.3s ease-out;
+
+      .form-label {
+        color: #475569;
+        margin-bottom: 0.5rem;
+      }
+
+      .form-control {
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        padding: 0.75rem 1rem;
+
+        &:focus {
+          border-color: #667eea;
+          box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        &:disabled {
+          background-color: #f1f5f9;
+        }
+      }
+    }
+  }
+
+  .assicurazione-attiva {
+    background: #f0fdf4;
+    border: 2px solid #86efac;
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .new-assicurazione-form {
+    background: #f8fafc;
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .assicurazione-storico {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  .coproprietari-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .coproprietario-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: #667eea;
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+    }
+  }
+
+  .new-coproprietario-form {
+    background: #f8fafc;
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .new-tagliando-form {
+    background: #f8fafc;
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .tagliando-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: #667eea;
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+    }
+
+    p {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+  }
+
+  textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0.5rem 1rem rgba(102, 126, 234, 0.3);
+    }
+  }
+
+  .btn-outline-secondary {
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+  }
+
+  .spinner-border {
+    width: 3rem;
+    height: 3rem;
+    border-width: 0.3rem;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Mobile
+@media (max-width: 767px) {
+  .dettaglio-auto-container {
+    padding: 1rem 0;
+
+    .page-header {
+      .page-title {
+        font-size: 1.5rem;
+      }
+
+      .d-flex {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 1rem;
+      }
+    }
+
+    .accordion-card {
+      .accordion-header {
+        padding: 1rem;
+
+        .accordion-title {
+          font-size: 1rem;
+        }
+
+        i {
+          font-size: 1.25rem;
+        }
+      }
+
+      .accordion-body {
+        padding: 1rem;
+      }
+    }
+  }
+}

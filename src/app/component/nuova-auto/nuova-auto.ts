@@ -75,6 +75,7 @@ export class NuovaAuto {
           dataDiAcquisto: new Date(this.dataDiAcquisto),
           proprietario: user,
           coProprietari: [],
+          assicurazioni: [],
           tagliandi: [],
           revisioni: []
         };

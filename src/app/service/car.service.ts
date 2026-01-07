@@ -44,12 +44,10 @@ export class CarService {
     // Prima query: auto dove l'utente è proprietario
     const qProprietario = query(this.carsCollection, where('proprietario.id', '==', userId));
     
-    // Seconda query: auto dove l'utente è tra i comproprietari
-    const qComproprietario = query(this.carsCollection, where('coProprietari', 'array-contains', { id: userId }));
-    
-    // Esegui entrambe le query e combina i risultati
-    return from(Promise.all([getDocs(qProprietario), getDocs(qComproprietario)])).pipe(
-      map(([snapshotProprietario, snapshotComproprietario]) => {
+    // Per i coproprietari, dobbiamo recuperare tutte le auto e filtrare lato client
+    // perché Firestore array-contains non supporta query parziali su oggetti
+    return from(Promise.all([getDocs(qProprietario), getDocs(this.carsCollection)])).pipe(
+      map(([snapshotProprietario, snapshotAll]) => {
         const autoSet = new Map<string, Car>();
         
         // Aggiungi auto come proprietario
@@ -58,11 +56,18 @@ export class CarService {
           autoSet.set(doc.id, this.convertFirebaseTimestamps({ ...data, targa: doc.id }));
         });
         
-        // Aggiungi auto come comproprietario (evita duplicati)
-        snapshotComproprietario.docs.forEach(doc => {
+        // Filtra auto come comproprietario
+        snapshotAll.docs.forEach(doc => {
           if (!autoSet.has(doc.id)) {
             const data = doc.data();
-            autoSet.set(doc.id, this.convertFirebaseTimestamps({ ...data, targa: doc.id }));
+            const coProprietari = data['coProprietari'] || [];
+            
+            // Verifica se l'utente è tra i coproprietari
+            const isComproprietario = coProprietari.some((cp: any) => cp.id === userId);
+            
+            if (isComproprietario) {
+              autoSet.set(doc.id, this.convertFirebaseTimestamps({ ...data, targa: doc.id }));
+            }
           }
         });
         
