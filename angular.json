@@ -29,10 +29,7 @@
             "styles": [
               "src/styles.scss"
             ],
-            "server": "src/main.server.ts",
-            "outputMode": "static",
-            "prerender": true,
-            "ssr": false
+            "outputPath": "dist/car-handler-pwa"
           },
           "configurations": {
             "production": {
