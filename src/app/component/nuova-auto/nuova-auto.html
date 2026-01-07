@@ -1,1 +1,174 @@
-<p>nuova-auto works!</p>
+<div class="nuova-auto-container">
+  <div class="container">
+    <!-- Header -->
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">
+          <i class="bi bi-plus-circle-fill me-2"></i>
+          Nuova Auto
+        </h1>
+        <p class="page-subtitle">Inserisci i dati della tua auto</p>
+      </div>
+    </div>
+
+    <!-- Alert messaggi -->
+    @if (successMessage()) {
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        {{ successMessage() }}
+        <button type="button" class="btn-close" (click)="successMessage.set(null)"></button>
+      </div>
+    }
+
+    @if (errorMessage()) {
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-circle-fill me-2"></i>
+        {{ errorMessage() }}
+        <button type="button" class="btn-close" (click)="errorMessage.set(null)"></button>
+      </div>
+    }
+
+    <!-- Form Card -->
+    <div class="form-card">
+      <div class="card-header">
+        <i class="bi bi-car-front-fill me-2"></i>
+        <span>Dati Auto</span>
+      </div>
+
+      <form class="card-body" (ngSubmit)="onSubmit()">
+        <div class="row">
+          <!-- Targa -->
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">
+                <i class="bi bi-credit-card-2-front-fill me-2"></i>Targa *
+              </label>
+              <input 
+                type="text" 
+                class="form-control text-uppercase" 
+                [(ngModel)]="targa"
+                name="targa"
+                placeholder="ES. AB123CD"
+                maxlength="10"
+                required>
+            </div>
+          </div>
+
+          <!-- Marca -->
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">
+                <i class="bi bi-tag-fill me-2"></i>Marca *
+              </label>
+              <input 
+                type="text" 
+                class="form-control text-uppercase" 
+                [(ngModel)]="marca"
+                name="marca"
+                placeholder="ES. FIAT"
+                required>
+            </div>
+          </div>
+
+          <!-- Modello -->
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">
+                <i class="bi bi-car-front me-2"></i>Modello *
+              </label>
+              <input 
+                type="text" 
+                class="form-control text-uppercase" 
+                [(ngModel)]="modello"
+                name="modello"
+                placeholder="ES. PANDA"
+                required>
+            </div>
+          </div>
+
+          <!-- Anno -->
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">
+                <i class="bi bi-calendar-fill me-2"></i>Anno *
+              </label>
+              <input 
+                type="number" 
+                class="form-control" 
+                [(ngModel)]="anno"
+                name="anno"
+                [min]="1950"
+                [max]="currentYear"
+                required>
+            </div>
+          </div>
+
+          <!-- Colore -->
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">
+                <i class="bi bi-palette-fill me-2"></i>Colore
+              </label>
+              <input 
+                type="text" 
+                class="form-control text-uppercase" 
+                [(ngModel)]="colore"
+                name="colore"
+                placeholder="ES. BIANCO">
+            </div>
+          </div>
+
+          <!-- Prezzo di Acquisto -->
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">
+                <i class="bi bi-currency-euro me-2"></i>Prezzo di Acquisto
+              </label>
+              <input 
+                type="number" 
+                class="form-control" 
+                [(ngModel)]="prezzoDiAcquisto"
+                name="prezzoDiAcquisto"
+                placeholder="0"
+                min="0"
+                step="0.01">
+            </div>
+          </div>
+
+          <!-- Data di Acquisto -->
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">
+                <i class="bi bi-calendar-event-fill me-2"></i>Data di Acquisto *
+              </label>
+              <input 
+                type="date" 
+                class="form-control" 
+                [(ngModel)]="dataDiAcquisto"
+                name="dataDiAcquisto"
+                [max]="currentYear + '-12-31'"
+                required>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button type="button" class="btn btn-secondary" (click)="resetForm()" [disabled]="isSaving()">
+            <i class="bi bi-arrow-counterclockwise me-2"></i>
+            Reset
+          </button>
+          <button type="submit" class="btn btn-success" [disabled]="isSaving()">
+            @if (isSaving()) {
+              <span class="spinner-border spinner-border-sm me-2"></span>
+              <span>Salvataggio...</span>
+            } @else {
+              <i class="bi bi-check-lg me-2"></i>
+              <span>Salva Auto</span>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

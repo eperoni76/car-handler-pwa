@@ -1,1 +1,81 @@
-<p>elenco-auto works!</p>
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <!-- Header -->
+      <div class="page-header">
+        <h1 class="page-title">
+          <i class="bi bi-car-front-fill me-2"></i>
+          Le Mie Auto
+        </h1>
+      </div>
+
+      <!-- Loading -->
+      @if (loading()) {
+        <div class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Caricamento...</span>
+          </div>
+        </div>
+      }
+
+      <!-- Errore -->
+      @if (error()) {
+        <div class="alert alert-danger" role="alert">
+          <i class="bi bi-exclamation-triangle me-2"></i>
+          {{ error() }}
+        </div>
+      }
+
+      <!-- Nessuna auto -->
+      @if (!loading() && !error() && auto().length === 0) {
+        <div class="alert alert-info" role="alert">
+          <i class="bi bi-info-circle me-2"></i>
+          Non hai ancora registrato nessuna auto. 
+          <a routerLink="/nuova-auto" class="alert-link">Aggiungi la tua prima auto</a>
+        </div>
+      }
+
+      <!-- Tabella auto -->
+      @if (!loading() && !error() && auto().length > 0) {
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead>
+              <tr>
+                <th>Targa</th>
+                <th>Marca</th>
+                <th>Modello</th>
+                <th>Anno</th>
+                <th class="d-none d-md-table-cell">Colore</th>
+                <th class="d-none d-lg-table-cell">Data Acquisto</th>
+                <th class="d-none d-lg-table-cell">Prezzo Acquisto</th>
+                <th class="text-end">Azioni</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (car of auto(); track car.targa) {
+                <tr>
+                  <td><strong class="text-uppercase">{{ car.targa }}</strong></td>
+                  <td>{{ car.marca }}</td>
+                  <td>{{ car.modello }}</td>
+                  <td>{{ car.anno }}</td>
+                  <td class="d-none d-md-table-cell">{{ car.colore }}</td>
+                  <td class="d-none d-lg-table-cell">{{ formatDate(car.dataDiAcquisto) }}</td>
+                  <td class="d-none d-lg-table-cell">{{ formatPrice(car.prezzoDiAcquisto) }}</td>
+                  <td class="text-end">
+                    <a 
+                      [routerLink]="['/dettaglio-auto', car.targa]" 
+                      class="btn btn-sm btn-primary"
+                      title="Visualizza dettagli">
+                      <i class="bi bi-eye me-1"></i>
+                      <span class="d-none d-md-inline">Dettagli</span>
+                    </a>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  </div>
+</div>
