@@ -2,6 +2,24 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.10.
 
+## ⚠️ Configurazione Iniziale Obbligatoria
+
+**PRIMA DI AVVIARE L'APP**, devi configurare le credenziali Firebase:
+
+1. Copia il file di esempio:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Modifica il file `.env` e inserisci le tue credenziali Firebase reali
+
+3. Genera i file environment:
+   ```bash
+   node generate-env.js
+   ```
+
+**IMPORTANTE**: Il file `.env` e i file in `src/environments/` contengono credenziali sensibili e NON vengono tracciati da Git. Consulta [SECURITY.md](SECURITY.md) per maggiori dettagli sulla sicurezza.
+
 ## Development server
 
 To start a local development server, run:
