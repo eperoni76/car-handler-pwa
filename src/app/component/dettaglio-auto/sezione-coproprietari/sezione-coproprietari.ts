@@ -63,23 +63,66 @@ export class SezioneCoproprietari implements OnInit {
       return;
     }
 
-    const nuovoUtente: Utente = {
-      id: '',
-      nome,
-      cognome,
-      codiceFiscale: cf,
-      dataDiNascita: null,
-      email: null,
-      annoConseguimentoPatente: null
-    };
+    // Verifica se l'utente esiste già nel database
+    this.userService.getByCodiceFiscale(cf).subscribe({
+      next: async (utenteEsistente) => {
+        let utenteId: string;
 
-    if (!this.car.coProprietari) {
-      this.car.coProprietari = [];
-    }
-    this.car.coProprietari.push(nuovoUtente);
+        if (utenteEsistente) {
+          // L'utente esiste già, usa l'ID esistente
+          utenteId = utenteEsistente.id;
+          console.log('Utente già esistente:', utenteEsistente);
+        } else {
+          // L'utente non esiste, crealo
+          const nuovoUtente: Omit<Utente, 'id'> = {
+            nome,
+            cognome,
+            codiceFiscale: cf,
+            dataDiNascita: null,
+            email: null,
+            annoConseguimentoPatente: null
+          };
 
-    this.carUpdated.emit(this.car);
-    this.toggleNewCoproprietarioForm();
+          // Crea l'utente nel database
+          try {
+            utenteId = await new Promise<string>((resolve, reject) => {
+              this.userService.create(nuovoUtente).subscribe({
+                next: (id) => resolve(id),
+                error: (err) => reject(err)
+              });
+            });
+            console.log('Nuovo utente creato con ID:', utenteId);
+          } catch (error) {
+            console.error('Errore nella creazione dell\'utente:', error);
+            alert('Errore durante la creazione dell\'utente');
+            return;
+          }
+        }
+
+        // Aggiungi il coproprietario alla macchina
+        const coproprietario: Utente = {
+          id: utenteId,
+          nome,
+          cognome,
+          codiceFiscale: cf,
+          dataDiNascita: null,
+          email: null,
+          annoConseguimentoPatente: null
+        };
+
+        if (!this.car.coProprietari) {
+          this.car.coProprietari = [];
+        }
+        this.car.coProprietari.push(coproprietario);
+
+        this.carUpdated.emit(this.car);
+        this.toggleNewCoproprietarioForm();
+      },
+      error: (err) => {
+        console.error('Errore durante la verifica dell\'utente:', err);
+        alert('Errore durante la verifica dell\'utente');
+      }
+    });
   }
 
   removeCoproprietario(codiceFiscale: string) {

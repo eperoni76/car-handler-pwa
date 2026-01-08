@@ -6,15 +6,20 @@ const envPath = path.join(__dirname, '.env');
 if (fs.existsSync(envPath)) {
   const envConfig = fs.readFileSync(envPath, 'utf8');
   envConfig.split('\n').forEach(line => {
-    const match = line.match(/^([^=:#]+)=(.*)$/);
-    if (match) {
-      const key = match[1].trim();
-      const value = match[2].trim();
-      if (!process.env[key]) {
+    // Rimuovi spazi e ignora commenti e righe vuote
+    line = line.trim();
+    if (!line || line.startsWith('#')) return;
+    
+    const separatorIndex = line.indexOf('=');
+    if (separatorIndex !== -1) {
+      const key = line.substring(0, separatorIndex).trim();
+      const value = line.substring(separatorIndex + 1).trim();
+      if (key && !process.env[key]) {
         process.env[key] = value;
       }
     }
   });
+  console.log('✓ Loaded environment variables from .env');
 }
 
 const envDir = path.join(__dirname, 'src', 'environments');
