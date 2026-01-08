@@ -1,3 +1,7 @@
+.elenco-auto-container {
+  padding: 2rem 0;
+}
+
 .page-header {
   margin-bottom: 2rem;
 
@@ -20,12 +24,22 @@
   }
 }
 
+.alert-animated {
+  border-radius: 10px;
+  border: none;
+  animation: slideDown 0.3s ease-out;
+}
+
+.table-card {
+  animation: fadeIn 0.5s ease-out;
+}
+
 .table {
   background-color: white;
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-  border-radius: 0.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
   overflow: hidden;
-  border: 1px solid #dee2e6;
+  border: none;
 
   thead {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
@@ -56,10 +70,15 @@
         transform: translateX(2px);
       }
 
+      &:last-child td {
+        border-bottom: none;
+      }
+
       td {
         padding: 1rem;
         vertical-align: middle;
         border-top: 1px solid #dee2e6;
+        border-bottom: 1px solid #dee2e6;
       }
     }
   }
@@ -93,4 +112,27 @@
   width: 3rem;
   height: 3rem;
   border-width: 0.3rem;
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
