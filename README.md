@@ -31,10 +31,32 @@ ng generate --help
 To build the project run:
 
 ```bash
-ng build
+npm run build
 ```
 
 This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+
+### Environment Variables for Production
+
+Before deploying to production, you need to set the following environment variables:
+
+```bash
+FIREBASE_API_KEY=your_api_key
+FIREBASE_AUTH_DOMAIN=your_auth_domain
+FIREBASE_PROJECT_ID=your_project_id
+FIREBASE_STORAGE_BUCKET=your_storage_bucket
+FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+FIREBASE_APP_ID=your_app_id
+```
+
+The build process will automatically run `generate-env.js` to create the environment files with these values.
+
+### Deployment
+
+When deploying to platforms like GitHub Pages, Netlify, or Vercel, make sure to:
+1. Set the environment variables in your deployment platform's settings
+2. Run the build command: `npm run build`
+3. Deploy the contents of the `dist/car-handler-pwa/browser` directory
 
 ## Running unit tests
 
