@@ -87,6 +87,69 @@
   padding: 1rem;
 }
 
+.documento-section {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+
+  .documento-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+
+    i {
+      font-size: 1.1rem;
+    }
+  }
+
+  .documento-body {
+    padding: 1.5rem;
+
+    .documento-nome {
+      font-weight: 600;
+      font-size: 1rem;
+      color: #1e293b;
+      margin-bottom: 0.5rem;
+    }
+
+    .documento-info {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+
+      .badge {
+        font-size: 0.75rem;
+        padding: 0.35rem 0.65rem;
+      }
+
+      small {
+        display: flex;
+        align-items: center;
+      }
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 8px;
+      padding: 0.625rem 1.25rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      }
+    }
+  }
+}
+
 @media (max-width: 767px) {
   .accordion-card {
     .accordion-header {

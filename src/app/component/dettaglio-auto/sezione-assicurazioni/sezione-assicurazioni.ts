@@ -329,15 +329,18 @@ export class SezioneAssicurazioni {
     if (!date) return '-';
     // Se è un timestamp di Firestore, convertilo
     if (date.toDate && typeof date.toDate === 'function') {
-      return date.toDate().toLocaleDateString('it-IT');
+      const d = date.toDate();
+      return d.toLocaleDateString('it-IT') + ' alle ' + d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
     }
     // Se è già un oggetto Date
     if (date instanceof Date) {
-      return date.toLocaleDateString('it-IT');
+      return date.toLocaleDateString('it-IT') + ' alle ' + date.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
     }
     // Se è una stringa o numero, prova a convertirlo
     try {
-      return new Date(date).toLocaleDateString('it-IT');
+      const d = new Date(date);
+      if (isNaN(d.getTime())) return '-';
+      return d.toLocaleDateString('it-IT') + ' alle ' + d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
     } catch {
       return '-';
     }

@@ -121,19 +121,6 @@
                 <div class="mb-2">
                   <strong>Costo Annuale:</strong> {{ formatPrice(assicurazioneAttiva.costoAnnuale) }}
                 </div>
-                @if (assicurazioneAttiva.documento) {
-                  <div class="mb-2">
-                    <strong>Contratto polizza:</strong>
-                    <a [href]="assicurazioneAttiva.documento.url" target="_blank" class="btn btn-sm btn-outline-primary ms-2">
-                      <i class="bi bi-file-earmark-pdf me-1"></i>
-                      {{ assicurazioneAttiva.documento.nome }}
-                    </a>
-                    <br>
-                    <small class="text-muted ms-5">
-                      {{ formatFileSize(assicurazioneAttiva.documento.dimensione) }} - Caricato il {{ formatDocumentDate(assicurazioneAttiva.documento.dataCaricamento) }}
-                    </small>
-                  </div>
-                }
               </div>
               <div class="col-md-4">
                 <strong>Coperture:</strong>
@@ -148,6 +135,42 @@
                 }
               </div>
             </div>
+
+            <!-- Sezione Documenti -->
+            @if (assicurazioneAttiva.documento) {
+              <div class="documento-section mt-4">
+                <div class="documento-header">
+                  <i class="bi bi-file-earmark-text-fill me-2"></i>
+                  <strong>Documento Contratto Polizza</strong>
+                </div>
+                <div class="documento-body">
+                  <div class="row align-items-center">
+                    <div class="col-md-8">
+                      <div class="d-flex align-items-center">
+                        <i class="bi bi-file-earmark-pdf text-danger fs-2 me-3"></i>
+                        <div>
+                          <div class="documento-nome">{{ assicurazioneAttiva.documento.nome }}</div>
+                          <div class="documento-info">
+                            <span class="badge bg-secondary me-2">{{ formatFileSize(assicurazioneAttiva.documento.dimensione) }}</span>
+                            <small class="text-muted">
+                              <i class="bi bi-clock me-1"></i>
+                              Caricato il {{ formatDocumentDate(assicurazioneAttiva.documento.dataCaricamento) }}
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4 text-end">
+                      <a [href]="assicurazioneAttiva.documento.url" target="_blank" class="btn btn-primary">
+                        <i class="bi bi-download me-2"></i>
+                        Scarica PDF
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+
             <div class="text-end mt-3">
               <button class="btn btn-sm btn-outline-primary me-2" (click)="startEditAssicurazione(assicurazioneAttiva)">
                 <i class="bi bi-pencil me-1"></i>
