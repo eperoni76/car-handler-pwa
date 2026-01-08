@@ -30,47 +30,47 @@
 
       <!-- Dati Auto -->
       <div class="row">
-        <div class="col-md-6 mb-3">
+        <div class="col-md-4 mb-3">
           <label class="form-label fw-bold">Targa</label>
           <input type="text" class="form-control text-uppercase" [value]="car.targa" disabled>
         </div>
 
-        <div class="col-md-6 mb-3">
+        <div class="col-md-4 mb-3">
           <label class="form-label fw-bold">Marca</label>
           <input type="text" class="form-control text-uppercase" [(ngModel)]="car.marca" [disabled]="!editMode()">
         </div>
 
-        <div class="col-md-6 mb-3">
+        <div class="col-md-4 mb-3">
           <label class="form-label fw-bold">Modello</label>
           <input type="text" class="form-control text-uppercase" [(ngModel)]="car.modello" [disabled]="!editMode()">
         </div>
 
-        <div class="col-md-6 mb-3">
+        <div class="col-md-4 mb-3">
           <label class="form-label fw-bold">Anno</label>
           <input type="number" class="form-control" [(ngModel)]="car.anno" [disabled]="!editMode()">
         </div>
 
-        <div class="col-md-6 mb-3">
+        <div class="col-md-4 mb-3">
           <label class="form-label fw-bold">Colore</label>
           <input type="text" class="form-control text-uppercase" [(ngModel)]="car.colore" [disabled]="!editMode()">
         </div>
 
-        <div class="col-md-6 mb-3">
+        <div class="col-md-4 mb-3">
           <label class="form-label fw-bold">Data di Acquisto</label>
           <input type="date" class="form-control" [ngModel]="car.dataDiAcquisto | date:'yyyy-MM-dd'" (ngModelChange)="car.dataDiAcquisto = $event" [disabled]="!editMode()">
         </div>
 
-        <div class="col-md-6 mb-3">
+        <div class="col-md-4 mb-3">
           <label class="form-label fw-bold">Prezzo di Acquisto</label>
           <input type="number" class="form-control" [(ngModel)]="car.prezzoDiAcquisto" [disabled]="!editMode()">
         </div>
 
-        <div class="col-md-6 mb-3">
+        <div class="col-md-4 mb-3">
           <label class="form-label fw-bold">Prezzo di Vendita</label>
           <input type="number" class="form-control" [(ngModel)]="car.prezzoDiVendita" [disabled]="!editMode()">
         </div>
 
-        <div class="col-md-6 mb-3">
+        <div class="col-md-4 mb-3">
           <label class="form-label fw-bold">Data di Vendita</label>
           <input type="date" class="form-control" [ngModel]="car.dataDiVendita | date:'yyyy-MM-dd'" (ngModelChange)="car.dataDiVendita = $event" [disabled]="!editMode()">
         </div>
