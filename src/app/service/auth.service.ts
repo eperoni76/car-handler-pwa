@@ -136,10 +136,29 @@ export class AuthService {
           }),
           catchError(error => {
             console.error('Errore durante la registrazione:', error);
-            const message = error.code === 'auth/email-already-in-use' 
-              ? 'Codice fiscale già registrato. Usa il login per accedere.'
-              : 'Errore durante la registrazione. Riprova.';
-            return of({ success: false, message });
+            
+            // Se l'account Firebase Auth esiste già, prova a creare solo il documento Firestore
+            if (error.code === 'auth/email-already-in-use') {
+              console.log('🔧 Account Firebase Auth già esistente, creo solo documento Firestore...');
+              return from(new Promise<string>((resolve, reject) => {
+                userService.create(userData).subscribe({
+                  next: (userId) => resolve(userId),
+                  error: (error) => reject(error)
+                });
+              })).pipe(
+                map((userId) => {
+                  const newUser: Utente = { ...userData, id: userId };
+                  this.setCurrentUser(newUser);
+                  return { success: true, user: newUser };
+                }),
+                catchError(firestoreError => {
+                  console.error('Errore creazione documento Firestore:', firestoreError);
+                  return of({ success: false, message: 'Codice fiscale già registrato. Usa il login per accedere.' });
+                })
+              );
+            }
+            
+            return of({ success: false, message: 'Errore durante la registrazione. Riprova.' });
           })
         );
       }),
