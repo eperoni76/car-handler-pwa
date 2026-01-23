@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Timestamp } from '@angular/fire/firestore';
 import { Car } from '../../../model/car';
 import { Assicurazione } from '../../../model/assicurazione';
 import { StorageService } from '../../../service/storage.service';
@@ -152,7 +153,7 @@ export class SezioneAssicurazioni {
           nome: this.selectedFile()!.name,
           url: url,
           dimensione: this.selectedFile()!.size,
-          dataCaricamento: new Date()
+          dataCaricamento: Timestamp.now().toDate()
         };
       } catch (error) {
         console.error('Errore durante l\'upload del file:', error);
@@ -253,7 +254,7 @@ export class SezioneAssicurazioni {
             nome: this.editSelectedFile()!.name,
             url: url,
             dimensione: this.editSelectedFile()!.size,
-            dataCaricamento: new Date()
+            dataCaricamento: Timestamp.now().toDate()
           };
         } catch (error) {
           console.error('Errore durante l\'upload del file:', error);

@@ -89,14 +89,45 @@ export class AuthService {
   loginByCodiceFiscale(codiceFiscale: string): Observable<{ success: boolean, message?: string, user?: Utente }> {
     const userService = this.injector.get(UserService);
     return userService.getByCodiceFiscale(codiceFiscale).pipe(
-      map(user => {
+      switchMap(user => {
         if (!user) {
-          return { success: false, message: 'Utente non trovato. Registrati per continuare.' };
+          return of({ success: false, message: 'Utente non trovato. Registrati per continuare.' });
         }
 
-        // Login riuscito
-        this.setCurrentUser(user);
-        return { success: true, user };
+        // Autentica su Firebase Auth
+        const email = this.generateEmailFromCF(codiceFiscale);
+        const password = codiceFiscale; // Usa il CF come password
+        const auth = this.injector.get(Auth);
+        
+        return from(signInWithEmailAndPassword(auth, email, password)).pipe(
+          map(() => {
+            // Login riuscito
+            console.log('✅ Firebase Auth login riuscito');
+            this.setCurrentUser(user);
+            return { success: true, user };
+          }),
+          catchError(error => {
+            console.error('❌ Errore Firebase Auth durante il login:', error.code);
+            
+            // Se l'utente non esiste su Firebase Auth, crealo
+            if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+              console.log('🔧 Creazione account Firebase Auth per utente esistente...');
+              return from(createUserWithEmailAndPassword(auth, email, password)).pipe(
+                map(() => {
+                  console.log('✅ Account Firebase Auth creato');
+                  this.setCurrentUser(user);
+                  return { success: true, user };
+                }),
+                catchError(createError => {
+                  console.error('❌ Errore creazione account Firebase Auth:', createError);
+                  return of({ success: false, message: 'Errore durante il login. Riprova.' });
+                })
+              );
+            }
+            
+            return of({ success: false, message: 'Errore durante il login. Riprova.' });
+          })
+        );
       }),
       catchError(error => {
         console.error('Errore durante il login:', error);

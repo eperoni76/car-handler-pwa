@@ -1,11 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { Storage, ref, uploadBytes, getDownloadURL, deleteObject } from '@angular/fire/storage';
+import { Auth } from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StorageService {
   private storage = inject(Storage);
+  private auth = inject(Auth);
 
   /**
    * Carica un file su Firebase Storage
@@ -14,6 +16,16 @@ export class StorageService {
    * @returns URL del file caricato
    */
   async uploadFile(file: File, path: string): Promise<string> {
+    // Debug: verifica autenticazione
+    const user = this.auth.currentUser;
+    console.log('Upload file - User authenticated:', !!user);
+    console.log('Upload file - User email:', user?.email);
+    console.log('Upload file - Path:', path);
+    
+    if (!user) {
+      throw new Error('Utente non autenticato. Effettua il login prima di caricare file.');
+    }
+    
     const storageRef = ref(this.storage, path);
     await uploadBytes(storageRef, file);
     return await getDownloadURL(storageRef);

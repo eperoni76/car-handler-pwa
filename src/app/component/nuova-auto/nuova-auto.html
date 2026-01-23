@@ -124,14 +124,17 @@
               <label class="form-label">
                 <i class="bi bi-currency-euro me-2"></i>Prezzo di Acquisto
               </label>
-              <input 
-                type="number" 
-                class="form-control" 
-                [(ngModel)]="prezzoDiAcquisto"
-                name="prezzoDiAcquisto"
-                placeholder="0"
-                min="0"
-                step="0.01">
+              <div class="input-group">
+                <input 
+                  type="number" 
+                  class="form-control" 
+                  [(ngModel)]="prezzoDiAcquisto"
+                  name="prezzoDiAcquisto"
+                  placeholder="0"
+                  min="0"
+                  step="0.01">
+                <span class="input-group-text">€</span>
+              </div>
             </div>
           </div>
 

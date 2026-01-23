@@ -62,12 +62,18 @@
 
         <div class="col-md-4 mb-3">
           <label class="form-label fw-bold">Prezzo di Acquisto</label>
-          <input type="number" class="form-control" [(ngModel)]="car.prezzoDiAcquisto" [disabled]="!editMode()">
+          <div class="input-group">
+            <input type="number" class="form-control" [(ngModel)]="car.prezzoDiAcquisto" [disabled]="!editMode()">
+            <span class="input-group-text">€</span>
+          </div>
         </div>
 
         <div class="col-md-4 mb-3">
           <label class="form-label fw-bold">Prezzo di Vendita</label>
-          <input type="number" class="form-control" [(ngModel)]="car.prezzoDiVendita" [disabled]="!editMode()">
+          <div class="input-group">
+            <input type="number" class="form-control" [(ngModel)]="car.prezzoDiVendita" [disabled]="!editMode()">
+            <span class="input-group-text">€</span>
+          </div>
         </div>
 
         <div class="col-md-4 mb-3">

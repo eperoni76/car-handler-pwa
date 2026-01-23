@@ -58,8 +58,11 @@
                 <input type="date" class="form-control" [(ngModel)]="editAssicurazione.dataFine">
               </div>
               <div class="col-md-4 mb-3">
-                <label class="form-label fw-bold">Costo Annuale (€) *</label>
-                <input type="number" class="form-control" [(ngModel)]="editAssicurazione.costoAnnuale">
+                <label class="form-label fw-bold">Costo Annuale *</label>
+                <div class="input-group">
+                  <input type="number" class="form-control" [(ngModel)]="editAssicurazione.costoAnnuale">
+                  <span class="input-group-text">€</span>
+                </div>
               </div>
               <div class="col-12 mb-3">
                 <label class="form-label fw-bold">Coperture (separate da virgola)</label>
@@ -219,8 +222,11 @@
             </div>
 
             <div class="col-md-4 mb-3">
-              <label class="form-label fw-bold">Costo Annuale (€) *</label>
-              <input type="number" class="form-control" [(ngModel)]="newAssicurazione.costoAnnuale">
+              <label class="form-label fw-bold">Costo Annuale *</label>
+              <div class="input-group">
+                <input type="number" class="form-control" [(ngModel)]="newAssicurazione.costoAnnuale">
+                <span class="input-group-text">€</span>
+              </div>
             </div>
 
             <div class="col-12 mb-3">
@@ -286,8 +292,11 @@
                   <input type="date" class="form-control" [(ngModel)]="editAssicurazione.dataFine">
                 </div>
                 <div class="col-md-4 mb-3">
-                  <label class="form-label fw-bold">Costo Annuale (€) *</label>
-                  <input type="number" class="form-control" [(ngModel)]="editAssicurazione.costoAnnuale">
+                  <label class="form-label fw-bold">Costo Annuale *</label>
+                  <div class="input-group">
+                    <input type="number" class="form-control" [(ngModel)]="editAssicurazione.costoAnnuale">
+                    <span class="input-group-text">€</span>
+                  </div>
                 </div>
                 <div class="col-12 mb-3">
                   <label class="form-label fw-bold">Coperture (separate da virgola)</label>

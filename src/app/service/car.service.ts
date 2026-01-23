@@ -116,7 +116,11 @@ export class CarService {
       assicurazioni: data.assicurazioni?.map((a: any) => ({
         ...a,
         dataInizio: a.dataInizio?.toDate ? a.dataInizio.toDate() : a.dataInizio,
-        dataFine: a.dataFine?.toDate ? a.dataFine.toDate() : a.dataFine
+        dataFine: a.dataFine?.toDate ? a.dataFine.toDate() : a.dataFine,
+        documento: a.documento ? {
+          ...a.documento,
+          dataCaricamento: a.documento.dataCaricamento?.toDate ? a.documento.dataCaricamento.toDate() : a.documento.dataCaricamento
+        } : undefined
       })) || [],
       manutenzioni: data.manutenzioni?.map((t: any) => ({
         ...t,
