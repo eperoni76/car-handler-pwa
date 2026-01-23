@@ -16,11 +16,7 @@ export class StorageService {
    * @returns URL del file caricato
    */
   async uploadFile(file: File, path: string): Promise<string> {
-    // Debug: verifica autenticazione
     const user = this.auth.currentUser;
-    console.log('Upload file - User authenticated:', !!user);
-    console.log('Upload file - User email:', user?.email);
-    console.log('Upload file - Path:', path);
     
     if (!user) {
       throw new Error('Utente non autenticato. Effettua il login prima di caricare file.');

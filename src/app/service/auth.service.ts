@@ -49,26 +49,20 @@ export class AuthService {
         
         return from(signInWithEmailAndPassword(auth, email, password)).pipe(
           map(() => {
-            // Login riuscito
-            console.log('✅ Firebase Auth login riuscito');
             this.setCurrentUser(user);
             return { success: true, user };
           }),
           catchError(error => {
-            console.error('❌ Errore Firebase Auth durante il login:', error.code);
-            
             // Se l'utente non esiste su Firebase Auth, crealo
             if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
-              console.log('🔧 Creazione account Firebase Auth per utente esistente...');
               const auth = this.injector.get(Auth);
               return from(createUserWithEmailAndPassword(auth, email, password)).pipe(
                 map(() => {
-                  console.log('✅ Account Firebase Auth creato');
                   this.setCurrentUser(user);
                   return { success: true, user };
                 }),
                 catchError(createError => {
-                  console.error('❌ Errore creazione account Firebase Auth:', createError);
+                  console.error('Errore creazione account Firebase Auth:', createError);
                   return of({ success: false, message: 'Errore durante il login. Riprova.' });
                 })
               );
@@ -101,25 +95,19 @@ export class AuthService {
         
         return from(signInWithEmailAndPassword(auth, email, password)).pipe(
           map(() => {
-            // Login riuscito
-            console.log('✅ Firebase Auth login riuscito');
             this.setCurrentUser(user);
             return { success: true, user };
           }),
           catchError(error => {
-            console.error('❌ Errore Firebase Auth durante il login:', error.code);
-            
             // Se l'utente non esiste su Firebase Auth, crealo
             if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
-              console.log('🔧 Creazione account Firebase Auth per utente esistente...');
               return from(createUserWithEmailAndPassword(auth, email, password)).pipe(
                 map(() => {
-                  console.log('✅ Account Firebase Auth creato');
                   this.setCurrentUser(user);
                   return { success: true, user };
                 }),
                 catchError(createError => {
-                  console.error('❌ Errore creazione account Firebase Auth:', createError);
+                  console.error('Errore creazione account Firebase Auth:', createError);
                   return of({ success: false, message: 'Errore durante il login. Riprova.' });
                 })
               );
