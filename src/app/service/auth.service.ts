@@ -1,7 +1,7 @@
-import { Injectable, inject, signal, PLATFORM_ID } from '@angular/core';
+import { Injectable, inject, signal, PLATFORM_ID, Injector } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
-import { Observable, of, catchError, tap, map, from, switchMap } from 'rxjs';
+import { Observable, of, catchError, map, from, switchMap } from 'rxjs';
 import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from '@angular/fire/auth';
 import { UserService } from './user.service';
 import { Utente } from '../model/utente';
@@ -10,10 +10,8 @@ import { Utente } from '../model/utente';
   providedIn: 'root'
 })
 export class AuthService {
-  private userService = inject(UserService);
-  private router = inject(Router);
+  private injector = inject(Injector);
   private platformId = inject(PLATFORM_ID);
-  private auth = inject(Auth);
 
   private currentUserSignal = signal<Utente | null>(null);
   currentUser = this.currentUserSignal.asReadonly();
@@ -31,7 +29,8 @@ export class AuthService {
 
   // Login - verifica che l'utente esista con nome, cognome e codice fiscale
   login(nome: string, cognome: string, codiceFiscale: string): Observable<{ success: boolean, message?: string, user?: Utente }> {
-    return this.userService.getByCodiceFiscale(codiceFiscale).pipe(
+    const userService = this.injector.get(UserService);
+    return userService.getByCodiceFiscale(codiceFiscale).pipe(
       switchMap(user => {
         if (!user) {
           return of({ success: false, message: 'Utente non trovato. Registrati per continuare.' });
@@ -46,8 +45,9 @@ export class AuthService {
         // Autentica su Firebase Auth
         const email = this.generateEmailFromCF(codiceFiscale);
         const password = codiceFiscale; // Usa il CF come password
+        const auth = this.injector.get(Auth);
         
-        return from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
+        return from(signInWithEmailAndPassword(auth, email, password)).pipe(
           map(() => {
             // Login riuscito
             console.log('✅ Firebase Auth login riuscito');
@@ -60,7 +60,8 @@ export class AuthService {
             // Se l'utente non esiste su Firebase Auth, crealo
             if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
               console.log('🔧 Creazione account Firebase Auth per utente esistente...');
-              return from(createUserWithEmailAndPassword(this.auth, email, password)).pipe(
+              const auth = this.injector.get(Auth);
+              return from(createUserWithEmailAndPassword(auth, email, password)).pipe(
                 map(() => {
                   console.log('✅ Account Firebase Auth creato');
                   this.setCurrentUser(user);
@@ -86,7 +87,8 @@ export class AuthService {
 
   // Login solo con codice fiscale
   loginByCodiceFiscale(codiceFiscale: string): Observable<{ success: boolean, message?: string, user?: Utente }> {
-    return this.userService.getByCodiceFiscale(codiceFiscale).pipe(
+    const userService = this.injector.get(UserService);
+    return userService.getByCodiceFiscale(codiceFiscale).pipe(
       map(user => {
         if (!user) {
           return { success: false, message: 'Utente non trovato. Registrati per continuare.' };
@@ -105,7 +107,8 @@ export class AuthService {
 
   // Registrazione - crea un nuovo utente
   register(userData: Omit<Utente, 'id'>): Observable<{ success: boolean, message?: string, user?: Utente }> {
-    return this.userService.checkCodiceFiscaleExists(userData.codiceFiscale).pipe(
+    const userService = this.injector.get(UserService);
+    return userService.checkCodiceFiscaleExists(userData.codiceFiscale).pipe(
       switchMap(exists => {
         if (exists) {
           return of({ success: false, message: 'Codice fiscale già registrato. Usa il login per accedere.' });
@@ -114,12 +117,13 @@ export class AuthService {
         // Crea account Firebase Auth
         const email = this.generateEmailFromCF(userData.codiceFiscale);
         const password = userData.codiceFiscale;
+        const auth = this.injector.get(Auth);
 
-        return from(createUserWithEmailAndPassword(this.auth, email, password)).pipe(
+        return from(createUserWithEmailAndPassword(auth, email, password)).pipe(
           switchMap(() => {
             // Crea l'utente in Firestore
             return from(new Promise<string>((resolve, reject) => {
-              this.userService.create(userData).subscribe({
+              userService.create(userData).subscribe({
                 next: (userId) => resolve(userId),
                 error: (error) => reject(error)
               });
@@ -148,12 +152,14 @@ export class AuthService {
 
   // Logout
   logout(): void {
-    signOut(this.auth).then(() => {
+    const auth = this.injector.get(Auth);
+    signOut(auth).then(() => {
       this.currentUserSignal.set(null);
       if (this.isBrowser) {
         localStorage.removeItem(this.STORAGE_KEY);
       }
-      this.router.navigate(['/login']);
+      const router = this.injector.get(Router);
+      router.navigate(['/login']);
     });
   }
 
